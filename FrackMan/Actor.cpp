@@ -12,11 +12,12 @@ void FrackMan::doSomething(){
     Direction d;
     int key;
     StudentWorld* w=getWorld();
-    
-    w->getKey(key);
-    d=getDirection();
     int x=getX();
     int y=getY();
+    
+    w->remDirt(x, y);
+    w->getKey(key);
+    d=getDirection();
     
     if (key== KEY_PRESS_LEFT) {
         if (d!=left) setDirection(left);

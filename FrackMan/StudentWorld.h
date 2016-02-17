@@ -24,7 +24,7 @@ public:
     virtual int move();
     virtual void cleanUp();
     void setGameStatText(std::string stat);
-
+    void remDirt(int x, int y);
 private:
     int key_val;
     std::string text;

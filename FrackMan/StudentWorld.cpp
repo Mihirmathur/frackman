@@ -17,7 +17,7 @@ StudentWorld::~StudentWorld(){
         i=m_actor.erase(i);
     }
     //Erase dirt elements.
-    for (int k=0; k<60; k++) {
+    for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
         }
@@ -36,7 +36,7 @@ int StudentWorld::init(){
     m_frackman = new FrackMan(this);
     
     //Initializing dirt.
-    for (int k=0; k<60; k++) {
+    for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
             //Shaft
             if((k>=30 && k<=33) && (l>=4 && l<=59)){}
@@ -96,13 +96,25 @@ void StudentWorld::cleanUp(){
     for (i=m_actor.begin(); i!=m_actor.end(); i++) {
         i=m_actor.erase(i);
     }
-    for (int k=0; k<60; k++) {
+    for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
-            
+            m_dirt [k][l]=nullptr;
         }
     }
     delete m_frackman;
     
 }
+
+void StudentWorld::remDirt(int x , int y){
+    for (int k=x; k<=x+3; k++) {
+        for (int l=y; l<=y+3; l++) {
+            if ((k>=0 && k<64) && (l>=0 && l<60)) {
+                delete m_dirt[k][l];
+                m_dirt[k][l]=nullptr;
+            }
+        }
+    }
+}
+
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
