@@ -8,7 +8,9 @@
 #include <string>
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
-
+class base;
+class FrackMan;
+class Dirt;
 class StudentWorld : public GameWorld
 {
 public:
@@ -22,7 +24,6 @@ public:
     virtual int move();
     virtual void cleanUp();
     void setGameStatText(std::string stat);
-    bool getKey();
 
 private:
     int key_val;
