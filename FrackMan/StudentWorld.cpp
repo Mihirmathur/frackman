@@ -13,7 +13,8 @@ StudentWorld::~StudentWorld(){
     vector<base*>::iterator i;
     
     //Erase actors.
-    for (i=m_actor.begin(); i!=m_actor.end(); i++) {
+    for (i=m_actor.begin(); i!=m_actor.end();) {
+        delete *i;
         i=m_actor.erase(i);
     }
     //Erase dirt elements.
@@ -96,7 +97,8 @@ int StudentWorld::move(){
 void StudentWorld::cleanUp(){
     vector<base*>::iterator i;
     
-    for (i=m_actor.begin(); i!=m_actor.end(); i++) {
+    for (i=m_actor.begin(); i!=m_actor.end();) {
+        delete *i;
         i=m_actor.erase(i);
     }
     for (int k=0; k<64; k++) {
