@@ -3,8 +3,10 @@
 
 #include "GraphObject.h"
 #include "StudentWorld.h"
-// Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
+
 class StudentWorld;
+///////////////////////////////////////////////////////////////////////////////
+
 class base :public GraphObject{
 public:
     base(StudentWorld* w, int imageID, int startX, int startY, Direction dir = right, double size = 1.0, unsigned int depth = 0):GraphObject(imageID, startX, startY, dir, size, depth) {
@@ -12,10 +14,13 @@ public:
         alive=1;
         m_world=w;
     }
-    //Destructor/
+    //Destructor.
     virtual ~base(){setVisible(0);}
-    virtual void doSomething()=0;//Pure virtual because it would never be called on base.
-   
+    
+    //Pure virtual because it would never be called on base.
+    virtual void doSomething()=0;
+    virtual void annoy()=0;
+    
     //Modifier
     void setAlive(bool t){alive = t;}
     
@@ -27,21 +32,50 @@ private:
     StudentWorld* m_world;
 };
 
+//////////////////////////////////////////////////////////////////////////////////
+
+
 class Dirt :public base{
 public:
-    Dirt(StudentWorld* w, int imageID, int startX, int startY):base(w,IID_DIRT, startX, startY, right, .25, 3){
+    Dirt(StudentWorld* w, int imageID, int startX, int startY):base(w,imageID, startX, startY, right, .25, 3){
     }
+    Dirt(StudentWorld* w, int imageID, int startX, int startY, Direction dir, double size, unsigned int depth):base(w,imageID, startX, startY, dir, size, depth){
+    }
+    virtual ~Dirt(){}
     virtual void doSomething(){}//Dirt does nothing
+    virtual void annoy(){}
 };
+
+//////////////////////////////////////////////////////////////////////////////////
 
 class FrackMan :public base{
 public:
     FrackMan(StudentWorld* w):base(w, IID_PLAYER, 30, 60, right, 1.0, 0){hitPoints=10;}
+    ~FrackMan(){}
     virtual void doSomething();
+    virtual void annoy();
     int getHitPoints(){return hitPoints;}
     //SEE
 private:
     int hitPoints;
     //TODO: ADD WATER, SONAR CHARGE, GOLD NUGGETS,
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+
+class Boulder :public Dirt{
+public:
+    Boulder(StudentWorld*w, int i, int x, int y):Dirt(w, IID_BOULDER, x, y, down, 1.0, 1){
+        state = 1;
+        ticks_elapsed=0;
+    }
+    ~Boulder(){};
+    virtual void doSomething();
+    void changeState(int n){state=n;}
+    int getState(){return state;}
+private:
+    //state=1 => stable. state=0 => waiting state=-1 => falling
+    int state;
+    int ticks_elapsed;
 };
 #endif // ACTOR_H_

@@ -1,7 +1,6 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 
-// Students:  Add code to this file (if you wish), Actor.h, StudentWorld.h, and StudentWorld.cpp
 void FrackMan::doSomething(){
     if (!isAlive()) 
         return;
@@ -16,9 +15,9 @@ void FrackMan::doSomething(){
     int y=getY();
     
     w->remDirt(x, y);
-    w->getKey(key);
-    d=getDirection();
     
+    if (w->getKey(key)==true) {
+    d=getDirection();
     if (key== KEY_PRESS_LEFT) {
         if (d!=left) setDirection(left);
         //TODO: Condition if boulder.
@@ -47,4 +46,34 @@ void FrackMan::doSomething(){
             if(y>0)moveTo(x,y-1);
         }
     }
+    }
+}
+
+void FrackMan::annoy(){
+    
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+void Boulder::doSomething(){
+    if (!isAlive())
+        return;
+    int x=getX();
+    int y=getY();
+    if (getState()==-1) {
+        moveTo(x, y-3);
+    }
+    if(getState()==0){
+        ticks_elapsed++;
+        if (ticks_elapsed==30)changeState(-1);
+    }
+    if(getState()==1){
+        
+        StudentWorld* w=getWorld();
+        if (w->checkDirt(x, y)==1);
+        else{
+            changeState(0);
+        }
+    }
+    
 }

@@ -2,7 +2,7 @@
 #include "Actor.h"
 #include <string>
 #include <algorithm>
-
+#include "GameController.h"
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir){
@@ -45,10 +45,13 @@ int StudentWorld::init(){
         }
     }
     //Number of boulders, gold and oil
+    /*
     int B= min(int(getLevel()/2 +2), 6);
     int G= max(int(5-getLevel()/2),2);
     int L=min(int(2+getLevel()),20);
-    
+    */
+    Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
+    m_actor.push_back(b);
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -115,6 +118,14 @@ void StudentWorld::remDirt(int x , int y){
             }
         }
     }
+}
+
+bool StudentWorld::checkDirt(int x, int y){
+    if (m_dirt[x][y-1]!=nullptr)return 1;
+    if (m_dirt[x+1][y-1]!=nullptr)return 1;
+    if (m_dirt[x+2][y-1]!=nullptr)return 1;
+    if (m_dirt[x+3][y-1]!=nullptr)return 1;
+    return 0;
 }
 
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp

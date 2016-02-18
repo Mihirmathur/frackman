@@ -25,6 +25,7 @@ public:
     virtual void cleanUp();
     void setGameStatText(std::string stat);
     void remDirt(int x, int y);
+    bool checkDirt(int x, int y);
 private:
     int key_val;
     std::string text;
