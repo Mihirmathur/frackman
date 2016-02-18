@@ -23,7 +23,6 @@ StudentWorld::~StudentWorld(){
             delete m_dirt[k][l];
         }
     }
-    
     //Delete FrackMan
     delete m_frackman;
 }
@@ -51,8 +50,8 @@ int StudentWorld::init(){
     int G= max(int(5-getLevel()/2),2);
     int L=min(int(2+getLevel()),20);
     */
-    Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
-    m_actor.push_back(b);
+    //Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
+    //m_actor.push_back(b);
     return GWSTATUS_CONTINUE_GAME;
 }
 
