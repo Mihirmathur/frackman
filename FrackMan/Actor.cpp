@@ -1,6 +1,8 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 
+//FRACKMAN
+
 void FrackMan::doSomething(){
     if (!isAlive()) 
         return;
@@ -46,6 +48,14 @@ void FrackMan::doSomething(){
             if(y>0)moveTo(x,y-1);
         }
     }
+    if (key==KEY_PRESS_SPACE) {
+        if (getWater()>0) {
+            Direction dir=getDirection();
+            w->createSquirt(x, y, dir);
+            reduceWater();
+        }
+        
+        }
     }
 }
 
@@ -54,26 +64,105 @@ void FrackMan::annoy(){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-
+//BOULDER
 void Boulder::doSomething(){
     if (!isAlive())
         return;
     int x=getX();
     int y=getY();
-    if (getState()==-1) {
-        moveTo(x, y-3);
+    StudentWorld* w=getWorld();
+    if (getState()==-2) {
+        setAlive(false);
     }
+    
+    //State -1: falling
+    
+    if (getState()==-1) {
+        
+        while(y>=0 && w->checkDirt(x,y)==0){
+            moveTo(x, y-1);
+            y--;
+        }
+        
+        //Add annoy feature.
+        
+        changeState(-2);
+    }
+    
+    //State 0: Waiting
     if(getState()==0){
         ticks_elapsed++;
         if (ticks_elapsed==30)changeState(-1);
     }
+    
+    //State 1: Stable
     if(getState()==1){
-        
-        StudentWorld* w=getWorld();
         if (w->checkDirt(x, y)==1);
         else{
             changeState(0);
         }
     }
+
     
 }
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//SQUIRT
+
+void Squirt::doSomething(){
+    if (!isAlive()) {
+        return;
+    }
+    
+    if(steps==3)setAlive(false);
+    int x=getX();
+    int y=getY();
+    StudentWorld* w=getWorld();
+    Direction dir = getDirection();
+    
+    //Add protestor annoying.
+    
+    switch (dir) {
+        case up:
+            if (!w->isDirtOrBoulder(x, y+1)) {
+                moveTo(x, y+1);
+                steps++;
+            }
+            else{
+                setAlive(false);
+            }
+            break;
+        case down:
+            if (!w->isDirtOrBoulder(x, y-1)) {
+                moveTo(x, y-1);
+                steps++;
+            }
+            else{
+                setAlive(false);
+            }
+            break;
+        case left:
+            if (!w->isDirtOrBoulder(x-1, y)) {
+                moveTo(x-1, y);
+                steps++;
+            }
+            else{
+                setAlive(false);
+            }
+            break;
+        case right:
+            if (!w->isDirtOrBoulder(x+1, y)) {
+                moveTo(x+1, y);
+                steps++;
+            }
+            else{
+                setAlive(false);
+            }
+            break;
+        
+    }
+    
+    
+}
+

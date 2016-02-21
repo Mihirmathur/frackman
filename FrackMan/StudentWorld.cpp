@@ -2,6 +2,7 @@
 #include "Actor.h"
 #include <string>
 #include <algorithm>
+#include "GraphObject.h"
 #include "GameController.h"
 using namespace std;
 
@@ -50,8 +51,8 @@ int StudentWorld::init(){
     int G= max(int(5-getLevel()/2),2);
     int L=min(int(2+getLevel()),20);
     */
-    //Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
-    //m_actor.push_back(b);
+    Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
+    m_actor.push_back(b);
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -82,6 +83,13 @@ int StudentWorld::move(){
         
     }
     //TODO: Remove dead objects.
+    for (i=m_actor.begin(); i!=m_actor.end();) {
+        if(!(*i)->isAlive()){
+            delete *i;
+            i=m_actor.erase(i);
+        }
+        else i++;
+    }
     
     if(!m_frackman->isAlive()){
         decLives();
@@ -113,7 +121,7 @@ void StudentWorld::cleanUp(){
 void StudentWorld::remDirt(int x , int y){
     for (int k=x; k<=x+3; k++) {
         for (int l=y; l<=y+3; l++) {
-            if ((k>=0 && k<64) && (l>=0 && l<60)) {
+            if ((k>=0 && k<64) && (l>=0 && l<60) && m_dirt[k][l]!=nullptr) {
                 delete m_dirt[k][l];
                 m_dirt[k][l]=nullptr;
             }
@@ -129,4 +137,35 @@ bool StudentWorld::checkDirt(int x, int y){
     return 0;
 }
 
+//Just works for dirt right now.
+bool StudentWorld::isDirtOrBoulder(int x, int y){
+    
+    if ((x>=0 && x<64) && (y>=0 && y<60) && m_dirt[x][y]!=nullptr) return true;
+    else return false;
+}
+
+
+void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
+    Squirt*s;
+    switch (dir) {
+        case Boulder::up:
+            s=new Squirt(this, IID_WATER_SPURT, x, y+4, dir);
+            m_actor.push_back(s);
+            break;
+        case Boulder::down:
+            s=new Squirt(this, IID_WATER_SPURT, x, y-4, dir);
+            m_actor.push_back(s);
+            break;
+        case Boulder::left:
+            s=new Squirt(this, IID_WATER_SPURT, x-4, y, dir);
+            m_actor.push_back(s);
+            break;
+        case Boulder::right:
+            s=new Squirt(this, IID_WATER_SPURT, x+4, y, dir);
+            m_actor.push_back(s);
+            break;
+        
+    }
+    
+}
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp

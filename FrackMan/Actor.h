@@ -50,14 +50,23 @@ public:
 
 class FrackMan :public base{
 public:
-    FrackMan(StudentWorld* w):base(w, IID_PLAYER, 30, 60, right, 1.0, 0){hitPoints=10;}
-    ~FrackMan(){}
+    FrackMan(StudentWorld* w):base(w, IID_PLAYER, 30, 60, right, 1.0, 0){
+        hitPoints=10;
+        water=5;
+    }
+    ~FrackMan(){
+    
+    }
     virtual void doSomething();
     virtual void annoy();
     int getHitPoints(){return hitPoints;}
+    unsigned int getWater(){return water;}
+    void addWater(){water++;}
+    void reduceWater(){water--;}
     //SEE
 private:
     int hitPoints;
+    int water;
     //TODO: ADD WATER, SONAR CHARGE, GOLD NUGGETS,
 };
 
@@ -77,5 +86,21 @@ private:
     //state=1 => stable. state=0 => waiting state=-1 => falling
     int state;
     int ticks_elapsed;
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+
+class Squirt: public base{
+public:
+    Squirt(StudentWorld*w, int i, int x, int y, Direction dir, double size=1.0, unsigned int depth =1 ):base(w, IID_WATER_SPURT, x, y, dir, size, depth){
+        steps=0;
+        
+    }
+    ~Squirt(){}
+    virtual void doSomething();
+    virtual void annoy(){};
+   
+private:
+    int steps;
 };
 #endif // ACTOR_H_

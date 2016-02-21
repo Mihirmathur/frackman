@@ -3,6 +3,7 @@
 
 #include "GameWorld.h"
 #include "GameConstants.h"
+#include "GraphObject.h"
 #include "Actor.h"
 #include <vector>
 #include <string>
@@ -23,9 +24,14 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
+    
     void setGameStatText(std::string stat);
     void remDirt(int x, int y);
+    
     bool checkDirt(int x, int y);
+    bool isDirtOrBoulder(int x, int y);
+    
+    void createSquirt(int x, int y, GraphObject::Direction dir);
 private:
     int key_val;
     std::string text;
