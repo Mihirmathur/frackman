@@ -10,7 +10,7 @@ class StudentWorld;
 class base :public GraphObject{
 public:
     base(StudentWorld* w, int imageID, int startX, int startY, Direction dir = right, double size = 1.0, unsigned int depth = 0):GraphObject(imageID, startX, startY, dir, size, depth) {
-        setVisible(1);
+        //setVisible(1);
         alive=1;
         m_world=w;
     }
@@ -38,8 +38,10 @@ private:
 class Dirt :public base{
 public:
     Dirt(StudentWorld* w, int imageID, int startX, int startY):base(w,imageID, startX, startY, right, .25, 3){
+        setVisible(1);
     }
     Dirt(StudentWorld* w, int imageID, int startX, int startY, Direction dir, double size, unsigned int depth):base(w,imageID, startX, startY, dir, size, depth){
+        setVisible(1);
     }
     virtual ~Dirt(){}
     virtual void doSomething(){}//Dirt does nothing
@@ -53,6 +55,7 @@ public:
     FrackMan(StudentWorld* w):base(w, IID_PLAYER, 30, 60, right, 1.0, 0){
         hitPoints=10;
         water=5;
+        setVisible(1);
     }
     ~FrackMan(){
     
@@ -77,6 +80,7 @@ public:
     Boulder(StudentWorld*w, int i, int x, int y):Dirt(w, IID_BOULDER, x, y, down, 1.0, 1){
         state = 1;
         ticks_elapsed=0;
+        setVisible(1);
     }
     ~Boulder(){};
     virtual void doSomething();
@@ -94,6 +98,7 @@ class Squirt: public base{
 public:
     Squirt(StudentWorld*w, int i, int x, int y, Direction dir, double size=1.0, unsigned int depth =1 ):base(w, IID_WATER_SPURT, x, y, dir, size, depth){
         steps=0;
+        setVisible(1);
         
     }
     ~Squirt(){}
@@ -103,4 +108,30 @@ public:
 private:
     int steps;
 };
+
+//////////////////////////////////////////////////////////////////////////////////
+
+class ActivatingObject : public base{
+public:
+    ActivatingObject(StudentWorld* world, int x, int y, int imageID,
+                     int soundToPlay, bool activateOnPlayer,
+                     bool activateOnProtester, bool initallyActive):base(world, imageID, x, y, right, 1.0, 2){}
+    
+    // Set number of ticks until this object dies
+    void setTicksToLive();
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+
+class OilBarrel : public ActivatingObject
+{
+public:
+    OilBarrel(StudentWorld* world, int x, int y):ActivatingObject(world, x, y, IID_BARREL, SOUND_FOUND_OIL, 0, 0, 0 ){
+        setVisible(0);
+    }
+    virtual bool needsToBePickedUpToFinishLevel() const;
+    virtual void doSomething();
+    virtual void annoy(){};
+};
+
 #endif // ACTOR_H_

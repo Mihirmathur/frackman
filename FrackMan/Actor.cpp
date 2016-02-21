@@ -160,9 +160,36 @@ void Squirt::doSomething(){
                 setAlive(false);
             }
             break;
-        
     }
-    
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+//ACTIVATING OBJECT
+
+void ActivatingObject::setTicksToLive(){
     
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+//OILBARREL
+void OilBarrel::doSomething(){
+    if (!isAlive()) {
+        return;
+    }
+    StudentWorld*w=getWorld();
+    base* f= w->findNearbyFrackMan(this, 4.0);
+    if(!isVisible() && f!=nullptr){
+        setVisible(1);
+        return;
+    }
+    
+}
+
+bool OilBarrel::needsToBePickedUpToFinishLevel() const{
+    return 1;
+}
+
+
+
+
 

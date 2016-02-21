@@ -32,6 +32,8 @@ public:
     bool isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
+    base* findNearbyFrackMan(base* a, double radius) const;
+    double distance(int x1, int y1, int x2, int y2) const;
 private:
     int key_val;
     std::string text;

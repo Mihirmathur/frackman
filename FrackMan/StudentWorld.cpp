@@ -52,7 +52,9 @@ int StudentWorld::init(){
     int L=min(int(2+getLevel()),20);
     */
     Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
+    OilBarrel* o=new OilBarrel(this, 25, 15);
     m_actor.push_back(b);
+    m_actor.push_back(o);
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -164,8 +166,22 @@ void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
             s=new Squirt(this, IID_WATER_SPURT, x+4, y, dir);
             m_actor.push_back(s);
             break;
-        
     }
-    
+}
+
+double StudentWorld::distance(int x1, int y1, int x2, int y2) const{
+    return pow((pow(x2-x1, 2) + pow(y2-y1, 2)), .5);
+}
+
+base* StudentWorld::findNearbyFrackMan(base* a, double radius) const{
+    int x1=a->getX();
+    int y1=a->getY();
+    int x2=m_frackman->getX();
+    int y2=m_frackman->getY();
+    //cerr<<"("<<x1<<", "<<y1<<") , ("<<x2<<", "<<y2<<") : ";
+    double r=distance(x1, y1, x2, y2);
+    //cerr<<r<<endl;
+    if(r<=radius)return m_frackman;
+    return nullptr;
 }
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
