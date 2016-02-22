@@ -53,8 +53,10 @@ int StudentWorld::init(){
     */
     Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
     OilBarrel* o=new OilBarrel(this, 25, 15);
+    GoldNugget* g=new GoldNugget(this, 30, 15, SOUND_GOT_GOODIE, 0,1,0,0);
     m_actor.push_back(b);
     m_actor.push_back(o);
+    m_actor.push_back(g);
     return GWSTATUS_CONTINUE_GAME;
 }
 

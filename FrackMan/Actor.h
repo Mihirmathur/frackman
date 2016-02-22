@@ -114,11 +114,19 @@ private:
 class ActivatingObject : public base{
 public:
     ActivatingObject(StudentWorld* world, int x, int y, int imageID,
-                     int soundToPlay, bool activateOnPlayer,
-                     bool activateOnProtester, bool initallyActive):base(world, imageID, x, y, right, 1.0, 2){}
+                     int soundToPlay, bool init, bool frack_pick, bool protest_pick):base(world, imageID, x, y, right, 1.0, 2){
+        setVisible(init);
+        frack_pickable=frack_pick;
+        protest_pickable=protest_pick;
+    }
     
     // Set number of ticks until this object dies
     void setTicksToLive();
+    bool canFrackmanPick(){return frack_pickable;}
+    bool canProtestorPick(){return protest_pickable;}
+private:
+    bool frack_pickable;
+    bool protest_pickable;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -126,12 +134,33 @@ public:
 class OilBarrel : public ActivatingObject
 {
 public:
-    OilBarrel(StudentWorld* world, int x, int y):ActivatingObject(world, x, y, IID_BARREL, SOUND_FOUND_OIL, 0, 0, 0 ){
-        setVisible(0);
+    OilBarrel(StudentWorld* world, int x, int y):ActivatingObject(world, x, y, IID_BARREL, SOUND_FOUND_OIL, 0, 1, 0){
     }
     virtual bool needsToBePickedUpToFinishLevel() const;
     virtual void doSomething();
     virtual void annoy(){};
 };
 
+//////////////////////////////////////////////////////////////////////////////////
+
+class GoldNugget : public ActivatingObject
+{
+public:
+    GoldNugget(StudentWorld* world, int x, int y, int sound, bool init, bool frack_pick, bool protest_pick, bool temp):ActivatingObject(world, x, y, IID_GOLD, sound, init, frack_pick, protest_pick){state=temp;}
+    virtual void doSomething();
+    virtual void annoy(){};
+    void setState(bool t){state = t;}
+    bool getState(bool t){return state;}
+private:
+    bool state;
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+
+class SonarKit : public ActivatingObject{
+public:
+    SonarKit(StudentWorld* w, int x, int y): ActivatingObject(w, x, y, IID_SONAR, SOUND_GOT_GOODIE, 1, 1,0){}
+    virtual void doSomething();
+    virtual void annoy(){};
+};
 #endif // ACTOR_H_

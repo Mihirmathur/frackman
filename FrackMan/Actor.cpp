@@ -182,6 +182,11 @@ void OilBarrel::doSomething(){
         setVisible(1);
         return;
     }
+    f= w->findNearbyFrackMan(this, 3.0);
+    if(f!=nullptr){
+        setAlive(0);
+        //UPDATE FRACKMAN's SCORE
+    }
     
 }
 
@@ -189,6 +194,32 @@ bool OilBarrel::needsToBePickedUpToFinishLevel() const{
     return 1;
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+//GOLD NUGGET
+void GoldNugget::doSomething(){
+    if (!isAlive())return;
+    
+    StudentWorld*w=getWorld();
+    base* f= w->findNearbyFrackMan(this, 4.0);
+    if(!isVisible() && f!=nullptr){
+        setVisible(1);
+        return;
+    }
+    if (canFrackmanPick()) {
+        f= w->findNearbyFrackMan(this, 3.0);
+        if(f!=nullptr)setAlive(0);
+        //PLAY SOUND
+        //INCREASE SCORE
+        //UPDATE GOLD NUGGETS
+    }
+    else if(canProtestorPick()){
+        //ADD PROTESTOR CODE
+    }
+    //IF STATE=TEMP
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+//SONAR KIT
 
 
 
