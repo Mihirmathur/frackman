@@ -18,6 +18,7 @@ public:
 	StudentWorld(std::string assetDir)
 	 : GameWorld(assetDir){
          m_frackman=nullptr;
+         barrels_collected=0;
      }
 
     virtual ~StudentWorld();
@@ -35,13 +36,17 @@ public:
     void createSquirt(int x, int y, GraphObject::Direction dir);
     FrackMan* findNearbyFrackMan(base* a, double radius) const;
     double distance(int x1, int y1, int x2, int y2) const;
+    void setXandY(int &x, int &y);
     
+    void increaseBarrelsCollected(){barrels_collected++;}
+    int getBarrelsCollected(){return barrels_collected;}
 private:
     int key_val;
     std::string text;
     std::vector<base*> m_actor;
     FrackMan* m_frackman;
     Dirt* m_dirt[64][64];
+    int barrels_collected;
 };
 
 #endif // STUDENTWORLD_H_

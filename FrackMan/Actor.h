@@ -150,7 +150,6 @@ class OilBarrel : public ActivatingObject
 public:
     OilBarrel(StudentWorld* world, int x, int y):ActivatingObject(world, x, y, IID_BARREL, SOUND_FOUND_OIL, 0, 1, 0){
     }
-    virtual bool needsToBePickedUpToFinishLevel() const;
     virtual void doSomething();
     virtual void annoy(){};
 };

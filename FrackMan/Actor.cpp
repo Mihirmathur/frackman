@@ -185,14 +185,12 @@ void OilBarrel::doSomething(){
     f= w->findNearbyFrackMan(this, 3.0);
     if(f!=nullptr){
         w->increaseScore(1000);
+        w->increaseBarrelsCollected();
         setAlive(0);
     }
     
 }
 
-bool OilBarrel::needsToBePickedUpToFinishLevel() const{
-    return 1;
-}
 
 //////////////////////////////////////////////////////////////////////////////////
 //GOLD NUGGET

@@ -40,7 +40,7 @@ void StudentWorld::setGameStatText(){
     int squirts = m_frackman->getWaterCount();
     int sonar = m_frackman->getSonarCount();
     //TODO: CHANGE OIL
-    int oil=0;
+    int oil=min(int(2+getLevel()),20)- getBarrelsCollected();
     ostringstream oss;  // oss is a name of our choosing.
     oss.setf(ios::fixed);
     // “Scr: 0321000 Lvl: 52 Lives: 3 Hlth: 80% Water: 20 Gld: 3 Sonar: 1 Oil Left: 2”
@@ -51,6 +51,7 @@ void StudentWorld::setGameStatText(){
 }
 
 int StudentWorld::init(){
+    barrels_collected=0;
     //Initializinf FrackMan
     m_frackman = new FrackMan(this);
     
@@ -67,54 +68,38 @@ int StudentWorld::init(){
     
     int B= min(int(getLevel()/2 +2), 6);
     int O=min(int(2+getLevel()),20);
-    //int G= max(int(5-getLevel()/2),2);
+    int G= max(int(5-getLevel()/2),2);
     
-    
-    int x, y,t, i;
-    int x2, y2;
+    int x, y, i;
     vector<base*>::iterator it;
     Boulder *b;
     OilBarrel *o;
+    GoldNugget* g;
     x=rand()%60;
     y=rand()%56;
     b=new Boulder(this, IID_BOULDER, x, y);
     remDirt(x, y);
     m_actor.push_back(b);
+    //Spawning Boulders
     for(i = 1; i<B; i++){
-        do{
-            t=0;
-            x=rand()%60;
-            y=rand()%56;
-            for (it=m_actor.begin(); it!=m_actor.end(); it++ ) {
-                x2=(*it)->getX();
-                y2=(*it)->getY();
-                if(distance(x, y, x2, y2)<6)break;
-                else t=1;
-            }
-        }while (t!=1);
+        setXandY(x,y);
         b=new Boulder(this, IID_BOULDER, x, y);
         remDirt(x, y);
         m_actor.push_back(b);
     }
+    //Spawning OilBarrels
     for(i=0; i<O; i++){
-        do{
-            t=0;
-            x=rand()%60;
-            y=rand()%56;
-            for (it=m_actor.begin(); it!=m_actor.end(); it++ ) {
-                x2=(*it)->getX();
-                y2=(*it)->getY();
-                if(distance(x, y, x2, y2)<6)break;
-                else t=1;
-            }
-        }while (t!=1);
+        setXandY(x, y);
         o=new OilBarrel(this, x, y);
         m_actor.push_back(o);
     }
+    //Spawning GoldNuggets
+    for(i=0; i<G; i++){
+        setXandY(x, y);
+        g=new GoldNugget(this, x, y, SOUND_GOT_GOODIE, 0,1,0,0);
+        m_actor.push_back(g);
+    }
     
-    GoldNugget* g=new GoldNugget(this, 30, 15, SOUND_GOT_GOODIE, 0,1,0,0);
-   
-    m_actor.push_back(g);
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -123,12 +108,12 @@ int StudentWorld::move(){
     StudentWorld::setGameStatText();
     //TODO: Update Display text
     
+    if(getBarrelsCollected()==min(int(2+getLevel()),20)){
+        return GWSTATUS_FINISHED_LEVEL;
+    }
     vector<base*>::iterator i;
     //FrackMan moves.
     m_frackman->doSomething();
-    
-    //TODO: ALL OIL COLLECTED
-    //RETURN
     
     //Each actor moves.
     for (i=m_actor.begin(); i!=m_actor.end(); i++) {
@@ -231,6 +216,22 @@ void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
 
 double StudentWorld::distance(int x1, int y1, int x2, int y2) const{
     return pow((pow(x2-x1, 2) + pow(y2-y1, 2)), .5);
+}
+
+void StudentWorld::setXandY(int &x, int &y){
+    vector<base*>::iterator it;
+    int t, x2, y2;
+    do{
+        t=0;
+        x=rand()%60;
+        y=rand()%56;
+        for (it=m_actor.begin(); it!=m_actor.end(); it++ ) {
+            x2=(*it)->getX();
+            y2=(*it)->getY();
+            if(distance(x, y, x2, y2)<6)break;
+            else t=1;
+        }
+    }while (t!=1);
 }
 
 FrackMan* StudentWorld::findNearbyFrackMan(base* a, double radius) const{
