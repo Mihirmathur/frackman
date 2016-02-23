@@ -55,6 +55,7 @@ public:
     FrackMan(StudentWorld* w):base(w, IID_PLAYER, 30, 60, right, 1.0, 0){
         hitPoints=10;
         water=5;
+        gold=0;
         setVisible(1);
     }
     ~FrackMan(){
@@ -62,14 +63,22 @@ public:
     }
     virtual void doSomething();
     virtual void annoy();
+    
+    //Accessors
     int getHitPoints(){return hitPoints;}
-    unsigned int getWater(){return water;}
+    unsigned int getWaterCount(){return water;}
+    int getGoldCount(){return gold;}
+    
+    //Modifiers
     void addWater(){water++;}
     void reduceWater(){water--;}
+    void addGold(){gold++;}
+    void reduceGold(){gold--;}
     //SEE
 private:
     int hitPoints;
     int water;
+    int gold;
     //TODO: ADD WATER, SONAR CHARGE, GOLD NUGGETS,
 };
 

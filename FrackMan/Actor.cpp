@@ -49,7 +49,7 @@ void FrackMan::doSomething(){
         }
     }
     if (key==KEY_PRESS_SPACE) {
-        if (getWater()>0) {
+        if (getWaterCount()>0) {
             Direction dir=getDirection();
             w->createSquirt(x, y, dir);
             reduceWater();
@@ -184,8 +184,8 @@ void OilBarrel::doSomething(){
     }
     f= w->findNearbyFrackMan(this, 3.0);
     if(f!=nullptr){
+        w->increaseScore(1000);
         setAlive(0);
-        //UPDATE FRACKMAN's SCORE
     }
     
 }
@@ -200,17 +200,21 @@ void GoldNugget::doSomething(){
     if (!isAlive())return;
     
     StudentWorld*w=getWorld();
-    base* f= w->findNearbyFrackMan(this, 4.0);
+    FrackMan* f= w->findNearbyFrackMan(this, 4.0);
     if(!isVisible() && f!=nullptr){
         setVisible(1);
         return;
     }
     if (canFrackmanPick()) {
         f= w->findNearbyFrackMan(this, 3.0);
-        if(f!=nullptr)setAlive(0);
+        if(f!=nullptr){
+            f->addGold();
+            setAlive(0);
+            w->increaseScore(10);
+        }
         //PLAY SOUND
-        //INCREASE SCORE
-        //UPDATE GOLD NUGGETS
+        
+        
     }
     else if(canProtestorPick()){
         //ADD PROTESTOR CODE

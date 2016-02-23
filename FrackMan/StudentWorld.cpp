@@ -4,6 +4,9 @@
 #include <algorithm>
 #include "GraphObject.h"
 #include "GameController.h"
+#include <sstream> 
+#include <iostream>
+#include <iomanip>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir){
@@ -28,7 +31,19 @@ StudentWorld::~StudentWorld(){
     delete m_frackman;
 }
 
-void StudentWorld::setGameStatText(std::string stat){
+void StudentWorld::setGameStatText(){
+    int score = getScore();
+    int level = getLevel();
+    int lives = getLives();
+    int health = m_frackman->getHitPoints()*10;
+    int gold = m_frackman->getGoldCount();
+    int squirts = m_frackman->getWaterCount();
+    ostringstream oss;  // oss is a name of our choosing.
+    oss.setf(ios::fixed);
+    // “Scr: 0321000 Lvl: 52 Lives: 3 Hlth: 80% Water: 20 Gld: 3 Sonar: 1 Oil Left: 2”
+    //Add Sonar and Oil
+    oss<<"Scr: "<<setw(8)<<setfill('0')<<score<<"  Lives "<<lives<<"  Lvl: "<<setw(2)<<setfill(' ')<<level<<"  Hlth: "<<setw(3)<<setfill(' ')<<health<<"%  Water:"<<setw(2)<<setfill(' ')<<squirts<<"  Gld: "<<setw(2)<<setfill(' ')<<gold;
+    text = oss.str();
     GameWorld::setGameStatText(text);
 }
 
@@ -62,7 +77,7 @@ int StudentWorld::init(){
 
 int StudentWorld::move(){
     string t;
-    setGameStatText(t);
+    StudentWorld::setGameStatText();
     //TODO: Update Display text
     
     vector<base*>::iterator i;
@@ -175,7 +190,7 @@ double StudentWorld::distance(int x1, int y1, int x2, int y2) const{
     return pow((pow(x2-x1, 2) + pow(y2-y1, 2)), .5);
 }
 
-base* StudentWorld::findNearbyFrackMan(base* a, double radius) const{
+FrackMan* StudentWorld::findNearbyFrackMan(base* a, double radius) const{
     int x1=a->getX();
     int y1=a->getY();
     int x2=m_frackman->getX();

@@ -25,14 +25,14 @@ public:
     virtual int move();
     virtual void cleanUp();
     
-    void setGameStatText(std::string stat);
+    void setGameStatText();
     void remDirt(int x, int y);
     
     bool checkDirt(int x, int y);
     bool isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
-    base* findNearbyFrackMan(base* a, double radius) const;
+    FrackMan* findNearbyFrackMan(base* a, double radius) const;
     double distance(int x1, int y1, int x2, int y2) const;
 private:
     int key_val;
