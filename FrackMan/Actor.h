@@ -56,6 +56,7 @@ public:
         hitPoints=10;
         water=5;
         gold=0;
+        sonar=0;
         setVisible(1);
     }
     ~FrackMan(){
@@ -65,20 +66,24 @@ public:
     virtual void annoy();
     
     //Accessors
-    int getHitPoints(){return hitPoints;}
+    unsigned int getHitPoints(){return hitPoints;}
     unsigned int getWaterCount(){return water;}
-    int getGoldCount(){return gold;}
+    unsigned int getGoldCount(){return gold;}
+    unsigned int getSonarCount(){return sonar;}
     
     //Modifiers
     void addWater(){water++;}
     void reduceWater(){water--;}
     void addGold(){gold++;}
     void reduceGold(){gold--;}
+    void addSonar(){sonar++;}
+    void reduceSonar(){sonar--;}
     //SEE
 private:
     int hitPoints;
     int water;
     int gold;
+    int sonar;
     //TODO: ADD WATER, SONAR CHARGE, GOLD NUGGETS,
 };
 

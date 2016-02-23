@@ -38,11 +38,14 @@ void StudentWorld::setGameStatText(){
     int health = m_frackman->getHitPoints()*10;
     int gold = m_frackman->getGoldCount();
     int squirts = m_frackman->getWaterCount();
+    int sonar = m_frackman->getSonarCount();
+    //TODO: CHANGE OIL
+    int oil=0;
     ostringstream oss;  // oss is a name of our choosing.
     oss.setf(ios::fixed);
     // “Scr: 0321000 Lvl: 52 Lives: 3 Hlth: 80% Water: 20 Gld: 3 Sonar: 1 Oil Left: 2”
     //Add Sonar and Oil
-    oss<<"Scr: "<<setw(8)<<setfill('0')<<score<<"  Lives "<<lives<<"  Lvl: "<<setw(2)<<setfill(' ')<<level<<"  Hlth: "<<setw(3)<<setfill(' ')<<health<<"%  Water:"<<setw(2)<<setfill(' ')<<squirts<<"  Gld: "<<setw(2)<<setfill(' ')<<gold;
+    oss<<"Scr: "<<setw(8)<<setfill('0')<<score<<"  Lives "<<lives<<"  Lvl: "<<setw(2)<<setfill(' ')<<level<<"  Hlth: "<<setw(3)<<setfill(' ')<<health<<"%  Water:"<<setw(2)<<setfill(' ')<<squirts<<"  Gld: "<<setw(2)<<setfill(' ')<<gold<<"  Sonar: "<<setw(2)<<setfill(' ')<<sonar<<"  Oil Left"<<setw(2)<<setfill(' ')<<oil;
     text = oss.str();
     GameWorld::setGameStatText(text);
 }
@@ -61,16 +64,56 @@ int StudentWorld::init(){
         }
     }
     //Number of boulders, gold and oil
-    /*
+    
     int B= min(int(getLevel()/2 +2), 6);
-    int G= max(int(5-getLevel()/2),2);
-    int L=min(int(2+getLevel()),20);
-    */
-    Boulder* b=new Boulder(this, IID_BOULDER, 10, 15);
-    OilBarrel* o=new OilBarrel(this, 25, 15);
-    GoldNugget* g=new GoldNugget(this, 30, 15, SOUND_GOT_GOODIE, 0,1,0,0);
+    int O=min(int(2+getLevel()),20);
+    //int G= max(int(5-getLevel()/2),2);
+    
+    
+    int x, y,t, i;
+    int x2, y2;
+    vector<base*>::iterator it;
+    Boulder *b;
+    OilBarrel *o;
+    x=rand()%60;
+    y=rand()%56;
+    b=new Boulder(this, IID_BOULDER, x, y);
+    remDirt(x, y);
     m_actor.push_back(b);
-    m_actor.push_back(o);
+    for(i = 1; i<B; i++){
+        do{
+            t=0;
+            x=rand()%60;
+            y=rand()%56;
+            for (it=m_actor.begin(); it!=m_actor.end(); it++ ) {
+                x2=(*it)->getX();
+                y2=(*it)->getY();
+                if(distance(x, y, x2, y2)<6)break;
+                else t=1;
+            }
+        }while (t!=1);
+        b=new Boulder(this, IID_BOULDER, x, y);
+        remDirt(x, y);
+        m_actor.push_back(b);
+    }
+    for(i=0; i<O; i++){
+        do{
+            t=0;
+            x=rand()%60;
+            y=rand()%56;
+            for (it=m_actor.begin(); it!=m_actor.end(); it++ ) {
+                x2=(*it)->getX();
+                y2=(*it)->getY();
+                if(distance(x, y, x2, y2)<6)break;
+                else t=1;
+            }
+        }while (t!=1);
+        o=new OilBarrel(this, x, y);
+        m_actor.push_back(o);
+    }
+    
+    GoldNugget* g=new GoldNugget(this, 30, 15, SOUND_GOT_GOODIE, 0,1,0,0);
+   
     m_actor.push_back(g);
     return GWSTATUS_CONTINUE_GAME;
 }

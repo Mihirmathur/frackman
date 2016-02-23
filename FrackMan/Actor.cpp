@@ -224,7 +224,18 @@ void GoldNugget::doSomething(){
 
 //////////////////////////////////////////////////////////////////////////////////
 //SONAR KIT
-
+void SonarKit::doSomething(){
+    if (!isAlive())return;
+    StudentWorld*w=getWorld();
+    FrackMan* f= w->findNearbyFrackMan(this, 3.0);
+    if(f!=nullptr){
+        setAlive(0);
+        w->increaseScore(75);
+        f->addSonar();
+        //PlaySound
+    }
+    
+}
 
 
 
