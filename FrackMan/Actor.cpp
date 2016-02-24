@@ -59,9 +59,14 @@ void FrackMan::doSomething(){
     }
 }
 
-void FrackMan::annoy(){
+void FrackMan::annoy(int amt){
     
 }
+//////////////////////////////////////////////////////////////////////////////////
+void Protestor::doSomething(){
+    
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //BOULDER
@@ -74,18 +79,13 @@ void Boulder::doSomething(){
     if (getState()==-2) {
         setAlive(false);
     }
-    
     //State -1: falling
-    
     if (getState()==-1) {
-        
         while(y>=0 && w->checkDirt(x,y)==0){
             moveTo(x, y-1);
             y--;
         }
-        
         //Add annoy feature.
-        
         changeState(-2);
     }
     
@@ -102,8 +102,6 @@ void Boulder::doSomething(){
             changeState(0);
         }
     }
-
-    
 }
 
 

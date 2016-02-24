@@ -100,7 +100,9 @@ int StudentWorld::init(){
         m_actor.push_back(g);
     }
     SonarKit*s=new SonarKit(this);
+    WaterPool*w=new WaterPool(this, 20, 30);
     m_actor.push_back(s);
+    m_actor.push_back(w);
     return GWSTATUS_CONTINUE_GAME;
 }
 

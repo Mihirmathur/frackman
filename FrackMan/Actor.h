@@ -19,7 +19,6 @@ public:
     
     //Pure virtual because it would never be called on base.
     virtual void doSomething()=0;
-    virtual void annoy()=0;
     
     //Modifier
     void setAlive(bool t){alive = t;}
@@ -45,28 +44,37 @@ public:
     }
     virtual ~Dirt(){}
     virtual void doSomething(){}//Dirt does nothing
-    virtual void annoy(){}
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 
-class FrackMan :public base{
+class Living :public base{
 public:
-    FrackMan(StudentWorld* w):base(w, IID_PLAYER, 30, 60, right, 1.0, 0){
-        hitPoints=10;
+    Living(StudentWorld* w, int i, int hit=10, int x=30, int y=60, Direction dir=right):base(w, i, x, y, dir, 1, 0){hitPoints=hit;
+        setVisible(1);
+    }
+    virtual ~Living(){}
+    virtual void annoy(int amt)=0;
+    virtual unsigned int getHitPoints(){return hitPoints;}
+private:
+    int hitPoints;
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+class FrackMan :public Living{
+public:
+    FrackMan(StudentWorld* w):Living(w, IID_PLAYER){
         water=5;
         gold=0;
         sonar=0;
-        setVisible(1);
     }
     ~FrackMan(){
     
     }
     virtual void doSomething();
-    virtual void annoy();
+    virtual void annoy(int amt);
     
     //Accessors
-    unsigned int getHitPoints(){return hitPoints;}
     unsigned int getWaterCount(){return water;}
     unsigned int getGoldCount(){return gold;}
     unsigned int getSonarCount(){return sonar;}
@@ -80,11 +88,18 @@ public:
     void reduceSonar(){sonar--;}
     //SEE
 private:
-    int hitPoints;
     int water;
     int gold;
     int sonar;
-    //TODO: ADD WATER, SONAR CHARGE, GOLD NUGGETS,
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+class Protestor : public Living{
+public:
+    Protestor(StudentWorld*w, int i):Living(w, i, 5 ,60, 60, left ){}
+    ~Protestor(){}
+    virtual void annoy(int amt){};
+    virtual void doSomething();
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +132,6 @@ public:
     }
     ~Squirt(){}
     virtual void doSomething();
-    virtual void annoy(){};
    
 private:
     int steps;
@@ -133,7 +147,7 @@ public:
         frack_pickable=frack_pick;
         protest_pickable=protest_pick;
     }
-    
+    virtual ~ActivatingObject(){}
     // Set number of ticks until this object dies
     void setTicksToLive();
     bool canFrackmanPick(){return frack_pickable;}
@@ -150,8 +164,8 @@ class OilBarrel : public ActivatingObject
 public:
     OilBarrel(StudentWorld* world, int x, int y):ActivatingObject(world, x, y, IID_BARREL, SOUND_FOUND_OIL, 0, 1, 0){
     }
+    ~OilBarrel(){}
     virtual void doSomething();
-    virtual void annoy(){};
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -160,8 +174,8 @@ class GoldNugget : public ActivatingObject
 {
 public:
     GoldNugget(StudentWorld* world, int x, int y, int sound, bool init, bool frack_pick, bool protest_pick, bool temp):ActivatingObject(world, x, y, IID_GOLD, sound, init, frack_pick, protest_pick){state=temp;}
+    ~GoldNugget(){}
     virtual void doSomething();
-    virtual void annoy(){};
     void setState(bool t){state = t;}
     bool getState(bool t){return state;}
 private:
@@ -175,8 +189,8 @@ public:
     SonarKit(StudentWorld* w): ActivatingObject(w, 0, 60, IID_SONAR, SOUND_GOT_GOODIE, 1, 1,0){
         ticks_elapsed=0;
     }
+    ~SonarKit(){}
     virtual void doSomething();
-    virtual void annoy(){};
 private:
     int ticks_elapsed;
 };
@@ -186,8 +200,8 @@ private:
 class WaterPool : public ActivatingObject{
 public:
     WaterPool(StudentWorld* w, int x, int y): ActivatingObject(w, x, y, IID_WATER_POOL, SOUND_GOT_GOODIE, 1, 1, 0){ticks_elapsed=0;}
+    ~WaterPool(){}
     virtual void doSomething();
-    virtual void annoy(){};
 private:
     int ticks_elapsed;
 };
