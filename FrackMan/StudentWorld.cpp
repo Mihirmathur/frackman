@@ -81,6 +81,7 @@ int StudentWorld::init(){
     for(i = 0; i<B; i++){
         setXandY(x,y);
         b=new Boulder(this, IID_BOULDER, x, y);
+        updateBoulderPosition(x, y, -1);
         remDirt(x, y);
         m_actor.push_back(b);
     }
@@ -188,8 +189,20 @@ bool StudentWorld::isDirtOrBoulder(int x, int y){
     if ((x>=0 && x<64) && (y>=0 && y<60) && m_dirt[x][y]!=nullptr) return true;
     else return false;
 }
-bool isBoulder(int x, int y){
-    return true;
+
+void StudentWorld::updateBoulderPosition(int x, int y, int t){
+    for (int k=x; k<=x+3; k++) {
+        for (int l=y; l<=y+3; l++) {
+            if ((k>=0 && k<64) && (l>=0 && l<60)) {
+                grid[k][l]=-1;
+            }
+        }
+    }
+}
+
+bool StudentWorld::isNotBoulder(int x, int y){
+    if(grid[x][y]==0)return true;
+    return false;
 }
 
 void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
@@ -244,5 +257,17 @@ FrackMan* StudentWorld::findNearbyFrackMan(base* a, double radius) const{
     //cerr<<r<<endl;
     if(r<=radius)return m_frackman;
     return nullptr;
+}
+
+void StudentWorld::discover(int x, int y){
+    vector<base*>::iterator i;
+    int x2, y2;
+    double d;
+    for (i=m_actor.begin(); i!=m_actor.end(); i++) {
+        x2=(*i)->getX();
+        y2=(*i)->getY();
+        d=distance(x, y, x2, y2);
+        if(d<12)(*i)->setVisible(1);
+    }
 }
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp

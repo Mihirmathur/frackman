@@ -20,6 +20,11 @@ public:
          m_frackman=nullptr;
          barrels_collected=0;
          totalP=0;
+         for (int i=0; i<64; i++) {
+             for (int j=0; j<64; j++) {
+                 grid[i][j]=0;
+             }
+         }
      }
 
     virtual ~StudentWorld();
@@ -32,13 +37,16 @@ public:
     
     
     bool checkDirt(int x, int y);
-    bool isBoulder(int x, int y);
+    bool isNotBoulder(int x, int y);
     bool isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
     FrackMan* findNearbyFrackMan(base* a, double radius) const;
     double distance(int x1, int y1, int x2, int y2) const;
     void setXandY(int &x, int &y);
+    void updateBoulderPosition(int x, int y, int t);
+    void discover(int x, int y);
+   
     
     void increaseBarrelsCollected(){barrels_collected++;}
     int getBarrelsCollected(){return barrels_collected;}
@@ -48,6 +56,7 @@ private:
     std::vector<base*> m_actor;
     FrackMan* m_frackman;
     Dirt* m_dirt[64][64];
+    int grid[64][64];
     int barrels_collected;
     int totalP;
 };

@@ -24,28 +24,28 @@ void FrackMan::doSomething(){
         if (d!=left) setDirection(left);
         //TODO: Condition if boulder.
         else {
-            if(x>0)moveTo(x-1,y);
+            if(x>0 && w->isNotBoulder(x-1, y))moveTo(x-1,y);
         }
     }
     if (key== KEY_PRESS_RIGHT) {
         if (d!=right) setDirection(right);
         //TODO: Condition if boulder.
         else {
-            if(x<60)moveTo(x+1,y);
+            if(x<60 && w->isNotBoulder(x+1, y))moveTo(x+1,y);
         }
     }
     if (key== KEY_PRESS_UP) {
         if (d!=up) setDirection(up);
         //TODO: Condition if boulder.
         else {
-            if(y<60)moveTo(x,y+1);
+            if(y<60 && w->isNotBoulder(x, y+1))moveTo(x,y+1);
         }
     }
     if (key== KEY_PRESS_DOWN) {
         if (d!=down) setDirection(down);
         //TODO: Condition if boulder.
         else {
-            if(y>0)moveTo(x,y-1);
+            if(y>0 && w->isNotBoulder(x, y-1))moveTo(x,y-1);
         }
     }
     if (key==KEY_PRESS_SPACE) {
@@ -55,8 +55,13 @@ void FrackMan::doSomething(){
             reduceWater();
         }
         
-        }
     }
+    if ((key=='z' || key=='Z') && getSonarCount()>0) {
+        reduceSonar();
+        w->discover(x, y);
+        
+    }
+}
 }
 
 void FrackMan::annoy(int amt){
@@ -175,6 +180,7 @@ void Boulder::doSomething(){
     }
     //State -1: falling
     if (getState()==-1) {
+        
         while(y>=0 && w->checkDirt(x,y)==0){
             moveTo(x, y-1);
             y--;
@@ -186,7 +192,10 @@ void Boulder::doSomething(){
     //State 0: Waiting
     if(getState()==0){
         ticks_elapsed++;
-        if (ticks_elapsed==30)changeState(-1);
+        if (ticks_elapsed==30){
+         w->updateBoulderPosition(x, y, 0);   
+        changeState(-1);
+        }
     }
     
     //State 1: Stable
