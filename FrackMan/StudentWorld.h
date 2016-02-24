@@ -41,6 +41,7 @@ public:
     bool isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
+    void addGoldForProtestor(int x, int y);
     FrackMan* findNearbyFrackMan(base* a, double radius) const;
     double distance(int x1, int y1, int x2, int y2) const;
     void setXandY(int &x, int &y);

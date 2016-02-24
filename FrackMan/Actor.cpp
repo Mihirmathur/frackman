@@ -20,9 +20,12 @@ void FrackMan::doSomething(){
     
     if (w->getKey(key)==true) {
     d=getDirection();
+        if(key== KEY_PRESS_ESCAPE){
+            setAlive(0);
+        }
     if (key== KEY_PRESS_LEFT) {
         if (d!=left) setDirection(left);
-        //TODO: Condition if boulder.
+        
         else {
             if(x>0 && w->isNotBoulder(x-1, y))moveTo(x-1,y);
         }
@@ -59,31 +62,76 @@ void FrackMan::doSomething(){
     if ((key=='z' || key=='Z') && getSonarCount()>0) {
         reduceSonar();
         w->discover(x, y);
-        
     }
+        if(key==KEY_PRESS_TAB && getGoldCount()>0){
+            reduceGold();
+            w->addGoldForProtestor(x,y);
+        }
 }
 }
 
-void FrackMan::annoy(int amt){
-    
-}
 //////////////////////////////////////////////////////////////////////////////////
 void Protestor::doSomething(){
     if (!isAlive())
         return;
     StudentWorld* w=getWorld();
-    int ticksToWait = std::max(0, int(3-(w->getLevel()/4)));
+    if(ticksToWait!=15)ticksToWait = std::max(0, int(3-(w->getLevel()/4)));
     Direction dir;
-    FrackMan* f= w->findNearbyFrackMan(this, 4.0);
+    int x=getX();
+    int y=getY();
+    if(getState()==0)
+        ticks_elapsed++;
+        
+    if (ticksToWait!=15) {
+        FrackMan* f= w->findNearbyFrackMan(this, 4.0);
+        if (f!=nullptr) {
+            //TODO: Play Sound
+            f->annoy(2);
+            ticksToWait=15;
+            ticks_elapsed++;
+            return;
+        }
+    }
+   
     //If protstor is facing FrackMan's direction and is 4 units away from it.
 //    if(f!=nullptr && f->getDirection()==getDirection()){
 //        
 //    }
-    
+    if(getSteps()<=0){
+    moveInDir= rand()%(60-8 + 1) + 8;
+        while (1) {
+            int r=rand()%4;
+            std::cerr<<r;
+            switch (r) {
+                case 0:
+                    if (y>0 && !w->isDirtOrBoulder(x, y-1)){
+                        setDirection(down);
+                        return;
+                    }
+                case 1:
+                    if(x<60 && !w->isDirtOrBoulder(x+1, y)){
+                        setDirection(right);
+                        return;
+                    }
+                case 2:
+                    if(y<60 && !w->isDirtOrBoulder(x, y+1)){
+                        setDirection(up);
+                        return;
+                    }
+                case 3:
+                    if (x>0 && !w->isDirtOrBoulder(x-1, y)){
+                        setDirection(left);
+                        return;
+                    }
+            }
+        }
+        
+    }
     //Regular move.
-    if(ticksToWait==0 || ticks_elapsed%ticksToWait==0){
-        int x=getX();
-        int y=getY();
+    if(ticksToWait==0 || (ticks_elapsed%ticksToWait)==0){
+        x=getX();
+        y=getY();
+        ticksToWait = std::max(0, int(3-(w->getLevel()/4)));
         //If number of steps that can be taken is positive.
         if (getSteps()>0) {
             dir=getDirection();
@@ -93,69 +141,51 @@ void Protestor::doSomething(){
                     moveTo(x-1, y);
                     reduceSteps();
                 }
-                else moveInDir=0;
+                else {
+                    moveInDir=0;
+                    ticks_elapsed++;
+                    return;
+                    
+                }
             }
             if (dir==right && (x<60)) {
                 if (!w->isDirtOrBoulder(x+1, y)) {
                 moveTo(x+1, y);
                 reduceSteps();
                 }
-                else moveInDir=0;
+                else {
+                    moveInDir=0;
+                    ticks_elapsed++;
+                    return;
+                }
             }
             if(dir==up && (y<60)){
                 if (!w->isDirtOrBoulder(x, y+1)) {
                 moveTo(x, y+1);
                 reduceSteps();
                 }
-                else moveInDir=0;
+                else {
+                    moveInDir=0;
+                    ticks_elapsed++;
+                    return;
+                }
             }
             if (dir==down && (y>0)) {
                 if (!w->isDirtOrBoulder(x, y-1)) {
                 moveTo(x, y-1);
                 reduceSteps();
                 }
-                else moveInDir=0;
+                else {
+                    moveInDir=0;
+                    ticks_elapsed++;
+                    return;
+                }
             }
         }
-        
-//        else{
-//            int randDir;
-//            int t=0;
-//            while (t==0) {
-//                randDir=rand()%(1003-1000 +1)+1000;
-//                switch (Direction(randDir)) {
-//                    case left:
-//                        if (x>0 && !w->isDirtOrBoulder(x-1, y)) {
-//                            setDirection(left);
-//                            t=1;
-//                        }
-//                        break;
-//                        
-//                    case right:
-//                        if (x<60 && !w->isDirtOrBoulder(x+1, y)) {
-//                            setDirection(right);
-//                            t=1;
-//                        }
-//                        break;
-//                        
-//                    case up:
-//                        if (y<60 && !w->isDirtOrBoulder(x, y+1)) {
-//                            setDirection(up);
-//                            t=1;
-//                        }
-//                        break;
-//                    case down:
-//                        if (y>0 && !w->isDirtOrBoulder(x, y-1)) {
-//                            setDirection(down);
-//                            t=1;
-//                        }
-//                        break;
-//                }
-//            }
-//            
-//            moveInDir= rand()%(60-8 + 1) + 8;
-//            
-//        }
+        else{
+           
+            
+        }
         
     }
     //Resting move
@@ -267,9 +297,7 @@ void Squirt::doSomething(){
 //////////////////////////////////////////////////////////////////////////////////
 //ACTIVATING OBJECT
 
-void ActivatingObject::setTicksToLive(){
-    
-}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //OILBARREL
@@ -312,13 +340,16 @@ void GoldNugget::doSomething(){
             w->increaseScore(10);
         }
         //PLAY SOUND
-        
-        
     }
     else if(canProtestorPick()){
         //ADD PROTESTOR CODE
     }
-    //IF STATE=TEMP
+    if(getState()==1){
+        if (ticks_elapsed<getTicksToLive()) {
+            ticks_elapsed++;
+        }
+        else setAlive(0);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////

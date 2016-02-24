@@ -54,7 +54,7 @@ int StudentWorld::init(){
     barrels_collected=0;
     //Initializinf FrackMan
     m_frackman = new FrackMan(this);
-    Protestor *p=new Protestor(this, IID_PROTESTER);
+    Protestor *p=new Protestor(this);
     totalP++;
     m_actor.push_back(p);
     //Initializing dirt.
@@ -110,6 +110,7 @@ int StudentWorld::move(){
     //TODO: Update Display text
     
     if(getBarrelsCollected()==min(int(2+getLevel()),20)){
+        //TODO: Play Sound
         return GWSTATUS_FINISHED_LEVEL;
     }
     vector<base*>::iterator i;
@@ -143,8 +144,6 @@ int StudentWorld::move(){
         decLives();
         return GWSTATUS_PLAYER_DIED;
     }
-    
-    //TODO: If current level finished. Play sound. Return GWSTATUS_FINISHED_LEVEL. 
     
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -269,5 +268,10 @@ void StudentWorld::discover(int x, int y){
         d=distance(x, y, x2, y2);
         if(d<12)(*i)->setVisible(1);
     }
+}
+
+void StudentWorld::addGoldForProtestor(int x, int y){
+    GoldNugget*g=new GoldNugget(this, x, y, SOUND_GOT_GOODIE, 1,0,1,1);
+    m_actor.push_back(g);
 }
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp

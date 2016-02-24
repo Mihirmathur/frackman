@@ -54,7 +54,7 @@ public:
         setVisible(1);
     }
     virtual ~Living(){}
-    virtual void annoy(int amt)=0;
+    virtual void annoy(int amt){hitPoints-=amt;};
     virtual unsigned int getHitPoints(){return hitPoints;}
 private:
     int hitPoints;
@@ -72,7 +72,6 @@ public:
     
     }
     virtual void doSomething();
-    virtual void annoy(int amt);
     
     //Accessors
     unsigned int getWaterCount(){return water;}
@@ -96,14 +95,16 @@ private:
 //////////////////////////////////////////////////////////////////////////////////
 class Protestor : public Living{
 public:
-    Protestor(StudentWorld*w, int i):Living(w, i, 5 ,60, 60, left ){
+    
+    Protestor(StudentWorld*w, int i=IID_PROTESTER, int h=5):Living(w, i, h ,60, 60, left ){
         state =0;
         ticks_elapsed=0;
         moveInDir= rand()%(60-8 + 1) + 8;
+        ticksToWait=0;
     }
-    ~Protestor(){
+    virtual ~Protestor(){
     }
-    virtual void annoy(int amt){};
+
     virtual void doSomething();
     
     void setState(int n){state=n;}
@@ -116,9 +117,14 @@ private:
     int state;
     int ticks_elapsed;
     int moveInDir;
+    int ticksToWait;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
+class HardcoreProtestor: public Protestor{
+    HardcoreProtestor(StudentWorld*w):Protestor(w, IID_HARD_CORE_PROTESTER, 20){}
+    virtual ~HardcoreProtestor(){}
+};
 
 class Boulder :public Dirt{
 public:
@@ -165,12 +171,14 @@ public:
     }
     virtual ~ActivatingObject(){}
     // Set number of ticks until this object dies
-    void setTicksToLive();
+    void setTicksToLive(int n){ticks_tolive=n;}
+    int getTicksToLive(){return ticks_tolive;}
     bool canFrackmanPick(){return frack_pickable;}
     bool canProtestorPick(){return protest_pickable;}
 private:
     bool frack_pickable;
     bool protest_pickable;
+    int ticks_tolive;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -189,13 +197,17 @@ public:
 class GoldNugget : public ActivatingObject
 {
 public:
-    GoldNugget(StudentWorld* world, int x, int y, int sound, bool init, bool frack_pick, bool protest_pick, bool temp):ActivatingObject(world, x, y, IID_GOLD, sound, init, frack_pick, protest_pick){state=temp;}
+    GoldNugget(StudentWorld* world, int x, int y, int sound, bool init, bool frack_pick, bool protest_pick, bool temp):ActivatingObject(world, x, y, IID_GOLD, sound, init, frack_pick, protest_pick){state=temp;
+        ticks_elapsed=0;
+        setTicksToLive(100);
+    }
     ~GoldNugget(){}
     virtual void doSomething();
     void setState(bool t){state = t;}
-    bool getState(bool t){return state;}
+    bool getState(){return state;}
 private:
     bool state;
+    int ticks_elapsed;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
