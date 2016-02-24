@@ -39,7 +39,7 @@ void StudentWorld::setGameStatText(){
     int gold = m_frackman->getGoldCount();
     int squirts = m_frackman->getWaterCount();
     int sonar = m_frackman->getSonarCount();
-    //TODO: CHANGE OIL
+
     int oil=min(int(2+getLevel()),20)- getBarrelsCollected();
     ostringstream oss;  // oss is a name of our choosing.
     oss.setf(ios::fixed);
@@ -99,7 +99,8 @@ int StudentWorld::init(){
         g=new GoldNugget(this, x, y, SOUND_GOT_GOODIE, 0,1,0,0);
         m_actor.push_back(g);
     }
-    
+    SonarKit*s=new SonarKit(this);
+    m_actor.push_back(s);
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -129,7 +130,7 @@ int StudentWorld::move(){
         }
         
     }
-    //TODO: Remove dead objects.
+    //Remove dead objects
     for (i=m_actor.begin(); i!=m_actor.end();) {
         if(!(*i)->isAlive()){
             delete *i;
@@ -150,7 +151,6 @@ int StudentWorld::move(){
 
 void StudentWorld::cleanUp(){
     vector<base*>::iterator i;
-    
     for (i=m_actor.begin(); i!=m_actor.end();) {
         delete *i;
         i=m_actor.erase(i);
@@ -162,7 +162,6 @@ void StudentWorld::cleanUp(){
         }
     }
     delete m_frackman;
-    
 }
 
 void StudentWorld::remDirt(int x , int y){

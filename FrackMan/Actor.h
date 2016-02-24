@@ -72,7 +72,7 @@ public:
     unsigned int getSonarCount(){return sonar;}
     
     //Modifiers
-    void addWater(){water++;}
+    void addWater(){water+=5;}
     void reduceWater(){water--;}
     void addGold(){gold++;}
     void reduceGold(){gold--;}
@@ -172,8 +172,23 @@ private:
 
 class SonarKit : public ActivatingObject{
 public:
-    SonarKit(StudentWorld* w, int x, int y): ActivatingObject(w, x, y, IID_SONAR, SOUND_GOT_GOODIE, 1, 1,0){}
+    SonarKit(StudentWorld* w): ActivatingObject(w, 0, 60, IID_SONAR, SOUND_GOT_GOODIE, 1, 1,0){
+        ticks_elapsed=0;
+    }
     virtual void doSomething();
     virtual void annoy(){};
+private:
+    int ticks_elapsed;
+};
+
+//////////////////////////////////////////////////////////////////////////////////
+
+class WaterPool : public ActivatingObject{
+public:
+    WaterPool(StudentWorld* w, int x, int y): ActivatingObject(w, x, y, IID_WATER_POOL, SOUND_GOT_GOODIE, 1, 1, 0){ticks_elapsed=0;}
+    virtual void doSomething();
+    virtual void annoy(){};
+private:
+    int ticks_elapsed;
 };
 #endif // ACTOR_H_

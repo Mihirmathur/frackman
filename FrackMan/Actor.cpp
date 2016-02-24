@@ -1,6 +1,6 @@
 #include "Actor.h"
 #include "StudentWorld.h"
-
+#include <algorithm>
 //FRACKMAN
 
 void FrackMan::doSomething(){
@@ -224,7 +224,13 @@ void GoldNugget::doSomething(){
 //SONAR KIT
 void SonarKit::doSomething(){
     if (!isAlive())return;
+    
     StudentWorld*w=getWorld();
+    int t= std::min(100, int(300 - 10*(w->getLevel())));
+    if (ticks_elapsed == t) {
+        setAlive(0);
+        return;
+    }
     FrackMan* f= w->findNearbyFrackMan(this, 3.0);
     if(f!=nullptr){
         setAlive(0);
@@ -232,8 +238,28 @@ void SonarKit::doSomething(){
         f->addSonar();
         //PlaySound
     }
+    ticks_elapsed++;
     
 }
 
-
+//////////////////////////////////////////////////////////////////////////////////
+//WATER POOL
+void WaterPool::doSomething(){
+    if (!isAlive())return;
+    
+    StudentWorld*w=getWorld();
+    int t= std::min(100, int(300 - 10*(w->getLevel())));
+    if (ticks_elapsed == t) {
+        setAlive(0);
+        return;
+    }
+    FrackMan* f= w->findNearbyFrackMan(this, 3.0);
+    if(f!=nullptr){
+        setAlive(0);
+        w->increaseScore(100);
+        f->addWater();
+        //PlaySound
+    }
+    ticks_elapsed++;
+}
 
