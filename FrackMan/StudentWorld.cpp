@@ -54,7 +54,9 @@ int StudentWorld::init(){
     barrels_collected=0;
     //Initializinf FrackMan
     m_frackman = new FrackMan(this);
-    
+    Protestor *p=new Protestor(this, IID_PROTESTER);
+    totalP++;
+    m_actor.push_back(p);
     //Initializing dirt.
     for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
@@ -75,13 +77,8 @@ int StudentWorld::init(){
     Boulder *b;
     OilBarrel *o;
     GoldNugget* g;
-    x=rand()%60;
-    y=rand()%56;
-    b=new Boulder(this, IID_BOULDER, x, y);
-    remDirt(x, y);
-    m_actor.push_back(b);
     //Spawning Boulders
-    for(i = 1; i<B; i++){
+    for(i = 0; i<B; i++){
         setXandY(x,y);
         b=new Boulder(this, IID_BOULDER, x, y);
         remDirt(x, y);
@@ -191,7 +188,9 @@ bool StudentWorld::isDirtOrBoulder(int x, int y){
     if ((x>=0 && x<64) && (y>=0 && y<60) && m_dirt[x][y]!=nullptr) return true;
     else return false;
 }
-
+bool isBoulder(int x, int y){
+    return true;
+}
 
 void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
     Squirt*s;

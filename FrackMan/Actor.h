@@ -96,10 +96,26 @@ private:
 //////////////////////////////////////////////////////////////////////////////////
 class Protestor : public Living{
 public:
-    Protestor(StudentWorld*w, int i):Living(w, i, 5 ,60, 60, left ){}
-    ~Protestor(){}
+    Protestor(StudentWorld*w, int i):Living(w, i, 5 ,60, 60, left ){
+        state =0;
+        ticks_elapsed=0;
+        moveInDir= rand()%(60-8 + 1) + 8;
+    }
+    ~Protestor(){
+    }
     virtual void annoy(int amt){};
     virtual void doSomething();
+    
+    void setState(int n){state=n;}
+    void reduceSteps(){moveInDir--;}
+    
+    int getState(){return state;}
+    int getSteps(){return moveInDir;}
+private:
+    //Rest State: 0, Leave Oil Field State: 1,
+    int state;
+    int ticks_elapsed;
+    int moveInDir;
 };
 
 //////////////////////////////////////////////////////////////////////////////////

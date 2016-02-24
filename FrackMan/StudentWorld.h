@@ -19,6 +19,7 @@ public:
 	 : GameWorld(assetDir){
          m_frackman=nullptr;
          barrels_collected=0;
+         totalP=0;
      }
 
     virtual ~StudentWorld();
@@ -31,6 +32,7 @@ public:
     
     
     bool checkDirt(int x, int y);
+    bool isBoulder(int x, int y);
     bool isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
@@ -47,6 +49,7 @@ private:
     FrackMan* m_frackman;
     Dirt* m_dirt[64][64];
     int barrels_collected;
+    int totalP;
 };
 
 #endif // STUDENTWORLD_H_

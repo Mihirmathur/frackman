@@ -64,6 +64,100 @@ void FrackMan::annoy(int amt){
 }
 //////////////////////////////////////////////////////////////////////////////////
 void Protestor::doSomething(){
+    if (!isAlive())
+        return;
+    StudentWorld* w=getWorld();
+    int ticksToWait = std::max(0, int(3-(w->getLevel()/4)));
+    Direction dir;
+    FrackMan* f= w->findNearbyFrackMan(this, 4.0);
+    //If protstor is facing FrackMan's direction and is 4 units away from it.
+//    if(f!=nullptr && f->getDirection()==getDirection()){
+//        
+//    }
+    
+    //Regular move.
+    if(ticksToWait==0 || ticks_elapsed%ticksToWait==0){
+        int x=getX();
+        int y=getY();
+        //If number of steps that can be taken is positive.
+        if (getSteps()>0) {
+            dir=getDirection();
+            if (dir==left && (x>0)) {
+                //If there is no dirt or boulder, protestor moves.
+                if (!w->isDirtOrBoulder(x-1, y)) {
+                    moveTo(x-1, y);
+                    reduceSteps();
+                }
+                else moveInDir=0;
+            }
+            if (dir==right && (x<60)) {
+                if (!w->isDirtOrBoulder(x+1, y)) {
+                moveTo(x+1, y);
+                reduceSteps();
+                }
+                else moveInDir=0;
+            }
+            if(dir==up && (y<60)){
+                if (!w->isDirtOrBoulder(x, y+1)) {
+                moveTo(x, y+1);
+                reduceSteps();
+                }
+                else moveInDir=0;
+            }
+            if (dir==down && (y>0)) {
+                if (!w->isDirtOrBoulder(x, y-1)) {
+                moveTo(x, y-1);
+                reduceSteps();
+                }
+                else moveInDir=0;
+            }
+        }
+        
+//        else{
+//            int randDir;
+//            int t=0;
+//            while (t==0) {
+//                randDir=rand()%(1003-1000 +1)+1000;
+//                switch (Direction(randDir)) {
+//                    case left:
+//                        if (x>0 && !w->isDirtOrBoulder(x-1, y)) {
+//                            setDirection(left);
+//                            t=1;
+//                        }
+//                        break;
+//                        
+//                    case right:
+//                        if (x<60 && !w->isDirtOrBoulder(x+1, y)) {
+//                            setDirection(right);
+//                            t=1;
+//                        }
+//                        break;
+//                        
+//                    case up:
+//                        if (y<60 && !w->isDirtOrBoulder(x, y+1)) {
+//                            setDirection(up);
+//                            t=1;
+//                        }
+//                        break;
+//                    case down:
+//                        if (y>0 && !w->isDirtOrBoulder(x, y-1)) {
+//                            setDirection(down);
+//                            t=1;
+//                        }
+//                        break;
+//                }
+//            }
+//            
+//            moveInDir= rand()%(60-8 + 1) + 8;
+//            
+//        }
+        
+    }
+    //Resting move
+    if(getState()==0){
+        ticks_elapsed++;
+        return;
+    }
     
 }
 
