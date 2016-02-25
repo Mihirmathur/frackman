@@ -102,23 +102,24 @@ void Protestor::doSomething(){
             std::cerr<<r;
             switch (r) {
                 case 0:
-                    if (y>4 && w->isDirtOrBoulder(x, y-4)==0){
-                        setDirection(down);
+                    if (x>0 && w->isDirtOrBoulder(x-1, y)==0 && w->isDirtOrBoulder(x-1, y+1)!=1 && w->isDirtOrBoulder(x-1, y+2)!=1 && w->isDirtOrBoulder(x-1, y+3)!=1 && w->isDirtOrBoulder(x-1, y+4)!=1){
+                        setDirection(left);
                         return;
                     }
+                    
                 case 1:
-                    if(x<60 && w->isDirtOrBoulder(x+4, y)==0){
+                    if(x<60 && w->isDirtOrBoulder(x+4, y)==0 && w->isDirtOrBoulder(x+4, y+1)!=1 && w->isDirtOrBoulder(x+4, y+2)!=1 && w->isDirtOrBoulder(x+4, y+3)!=1 && w->isDirtOrBoulder(x+4, y+4)!=1){
                         setDirection(right);
                         return;
                     }
                 case 2:
-                    if(y<60 && w->isDirtOrBoulder(x, y+4)==0){
+                    if(y<60 && w->isDirtOrBoulder(x, y+4)==0 && w->isDirtOrBoulder(x+1, y+4)!=1 && w->isDirtOrBoulder(x+2, y+4)!=1 && w->isDirtOrBoulder(x+3, y+4)!=1 && w->isDirtOrBoulder(x+4, y+4)!=1){
                         setDirection(up);
                         return;
                     }
                 case 3:
-                    if (x>4 && w->isDirtOrBoulder(x-4, y)==0){
-                        setDirection(left);
+                    if (y>0 && w->isDirtOrBoulder(x, y-1)==0 && w->isDirtOrBoulder(x+1, y-1)!=1 && w->isDirtOrBoulder(x+2, y-1)!=1 && w->isDirtOrBoulder(x+3, y-1)!=1 && w->isDirtOrBoulder(x+4, y-1)!=1){
+                        setDirection(down);
                         return;
                     }
             }
@@ -133,9 +134,9 @@ void Protestor::doSomething(){
         //If number of steps that can be taken is positive.
         if (getSteps()>0) {
             dir=getDirection();
-            if (dir==left && (x>0)) {
+            if (dir==left) {
                 //If there is no dirt or boulder, protestor moves.
-                if (w->isDirtOrBoulder(x-1, y)==0) {
+                if (w->isDirtOrBoulder(x-1, y)==0 && w->isDirtOrBoulder(x-1, y+1)!=1 && w->isDirtOrBoulder(x-1, y+2)!=1 && w->isDirtOrBoulder(x-1, y+3)!=1 && w->isDirtOrBoulder(x-1, y+4)!=1) {
                     moveTo(x-1, y);
                     reduceSteps();
                 }
@@ -146,8 +147,8 @@ void Protestor::doSomething(){
                     
                 }
             }
-            if (dir==right && (x<60)) {
-                if (w->isDirtOrBoulder(x+1, y)==0) {
+            if (dir==right) {
+                if (w->isDirtOrBoulder(x+4, y)==0 && w->isDirtOrBoulder(x+4, y+1)!=1 && w->isDirtOrBoulder(x+4, y+2)!=1 && w->isDirtOrBoulder(x+4, y+3)!=1 && w->isDirtOrBoulder(x+4, y+4)!=1) {
                 moveTo(x+1, y);
                 reduceSteps();
                 }
@@ -157,8 +158,8 @@ void Protestor::doSomething(){
                     return;
                 }
             }
-            if(dir==up && (y<60)){
-                if (w->isDirtOrBoulder(x, y+1)==0) {
+            if(dir==up){
+                if (w->isDirtOrBoulder(x, y+4)==0 && w->isDirtOrBoulder(x+1, y+4)!=1 && w->isDirtOrBoulder(x+2, y+4)!=1 && w->isDirtOrBoulder(x+3, y+4)!=1 && w->isDirtOrBoulder(x+4, y+4)!=1) {
                 moveTo(x, y+1);
                 reduceSteps();
                 }
@@ -169,7 +170,7 @@ void Protestor::doSomething(){
                 }
             }
             if (dir==down && (y>0)) {
-                if (w->isDirtOrBoulder(x, y-1)==0) {
+                if (w->isDirtOrBoulder(x, y-1)==0 && w->isDirtOrBoulder(x+1, y-1)!=1 && w->isDirtOrBoulder(x+2, y-1)!=1 && w->isDirtOrBoulder(x+3, y-1)!=1 && w->isDirtOrBoulder(x+4, y-1)!=1) {
                 moveTo(x, y-1);
                 reduceSteps();
                 }
@@ -338,9 +339,12 @@ void GoldNugget::doSomething(){
     }
     else if(canProtestorPick()){
         base* p=w->findNearbyProtestor(this, 4.0);
+        
         if(p!=nullptr){
             //TODO: Play sound
+            Protestor *pr=dynamic_cast<Protestor*>(p);
             w->increaseScore(25);
+            pr->setState(1);
             setAlive(0);
             return;
         }
