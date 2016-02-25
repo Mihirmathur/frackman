@@ -19,6 +19,7 @@ public:
     
     //Pure virtual because it would never be called on base.
     virtual void doSomething()=0;
+    virtual int getID(){return 0;}
     
     //Modifier
     void setAlive(bool t){alive = t;}
@@ -101,10 +102,11 @@ public:
         ticks_elapsed=0;
         moveInDir= rand()%(60-8 + 1) + 8;
         ticksToWait=0;
+        freeze=0;
     }
     virtual ~Protestor(){
     }
-
+    virtual int getID(){return 1;}
     virtual void doSomething();
     
     void setState(int n){state=n;}
@@ -117,6 +119,7 @@ private:
     int state;
     int ticks_elapsed;
     int moveInDir;
+    int freeze;
     int ticksToWait;
 };
 

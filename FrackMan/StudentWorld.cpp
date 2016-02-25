@@ -183,10 +183,12 @@ bool StudentWorld::checkDirt(int x, int y){
 }
 
 //Just works for dirt right now.
-bool StudentWorld::isDirtOrBoulder(int x, int y){
-    
-    if ((x>=0 && x<64) && (y>=0 && y<60) && m_dirt[x][y]!=nullptr) return true;
-    else return false;
+int StudentWorld::isDirtOrBoulder(int x, int y){
+    //Return -1 for invalid numbers. Return 1 for dirt. Return 0 otherwise.
+    if (x<0 || x>64)return -1;
+    if(y<0 || y>60)return -1;
+    if (m_dirt[x][y]!=nullptr) return 1;
+    else return 0;
 }
 
 void StudentWorld::updateBoulderPosition(int x, int y, int t){
@@ -251,10 +253,24 @@ FrackMan* StudentWorld::findNearbyFrackMan(base* a, double radius) const{
     int y1=a->getY();
     int x2=m_frackman->getX();
     int y2=m_frackman->getY();
-    //cerr<<"("<<x1<<", "<<y1<<") , ("<<x2<<", "<<y2<<") : ";
     double r=distance(x1, y1, x2, y2);
-    //cerr<<r<<endl;
     if(r<=radius)return m_frackman;
+    return nullptr;
+}
+
+base* StudentWorld::findNearbyProtestor(base* a, double radius){
+    vector<base*>::iterator i;
+    int x1=a->getX();
+    int y1=a->getY();
+    
+    for (i=m_actor.begin(); i!=m_actor.end(); i++) {
+        if((*i)->getID()==1){
+            int x2=(*i)->getX();
+            int y2=(*i)->getY();
+            double r=distance(x1, y1, x2, y2);
+            if(r<radius)return (*i);
+        }
+    }
     return nullptr;
 }
 

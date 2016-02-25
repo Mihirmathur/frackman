@@ -12,6 +12,7 @@
 class base;
 class FrackMan;
 class Dirt;
+class Protestor;
 class StudentWorld : public GameWorld
 {
 public:
@@ -38,11 +39,12 @@ public:
     
     bool checkDirt(int x, int y);
     bool isNotBoulder(int x, int y);
-    bool isDirtOrBoulder(int x, int y);
+    int isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
     void addGoldForProtestor(int x, int y);
     FrackMan* findNearbyFrackMan(base* a, double radius) const;
+    base* findNearbyProtestor(base* a, double radius);
     double distance(int x1, int y1, int x2, int y2) const;
     void setXandY(int &x, int &y);
     void updateBoulderPosition(int x, int y, int t);
