@@ -56,7 +56,7 @@ public:
     }
     virtual ~Living(){}
     virtual void annoy(int amt){hitPoints-=amt;};
-    virtual unsigned int getHitPoints(){return hitPoints;}
+    virtual int getHitPoints(){return hitPoints;}
 private:
     int hitPoints;
 };
@@ -110,6 +110,7 @@ public:
     virtual void doSomething();
     
     void setState(int n){state=n;}
+    void setFreeze(int n){freeze=n;}
     void reduceSteps(){moveInDir--;}
     
     int getState(){return state;}
@@ -137,6 +138,7 @@ public:
         setVisible(1);
     }
     ~Boulder(){};
+    virtual int getID(){return 2;}
     virtual void doSomething();
     void changeState(int n){state=n;}
     int getState(){return state;}

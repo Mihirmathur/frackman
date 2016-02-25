@@ -81,7 +81,6 @@ int StudentWorld::init(){
     for(i = 0; i<B; i++){
         setXandY(x,y);
         b=new Boulder(this, IID_BOULDER, x, y);
-        updateBoulderPosition(x, y, -1);
         remDirt(x, y);
         m_actor.push_back(b);
     }
@@ -169,6 +168,7 @@ void StudentWorld::remDirt(int x , int y){
             if ((k>=0 && k<64) && (l>=0 && l<60) && m_dirt[k][l]!=nullptr) {
                 delete m_dirt[k][l];
                 m_dirt[k][l]=nullptr;
+                //GameController::getInstance().playSound(SOUND_DIG);
             }
         }
     }
@@ -191,19 +191,20 @@ int StudentWorld::isDirtOrBoulder(int x, int y){
     else return 0;
 }
 
-void StudentWorld::updateBoulderPosition(int x, int y, int t){
-    for (int k=x; k<=x+3; k++) {
-        for (int l=y; l<=y+3; l++) {
-            if ((k>=0 && k<64) && (l>=0 && l<60)) {
-                grid[k][l]=-1;
+
+bool StudentWorld::NotBoulder(int x, int y){
+    vector<base*>::iterator i;
+    int x2,y2;
+    for (i=m_actor.begin(); i!=m_actor.end();i++) {
+        if ((*i)->getID()==2) {
+            x2=(*i)->getX();
+            y2=(*i)->getY();
+            if (distance(x, y, x2, y2) < 4) {
+                return false;
             }
         }
     }
-}
-
-bool StudentWorld::isNotBoulder(int x, int y){
-    if(grid[x][y]==0)return true;
-    return false;
+    return true;
 }
 
 void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
@@ -242,7 +243,7 @@ void StudentWorld::setXandY(int &x, int &y){
         for (it=m_actor.begin(); it!=m_actor.end(); it++ ) {
             x2=(*it)->getX();
             y2=(*it)->getY();
-            if(distance(x, y, x2, y2)<6)break;
+            if(distance(x, y, x2, y2)<6);
             else t=1;
         }
     }while (t!=1);

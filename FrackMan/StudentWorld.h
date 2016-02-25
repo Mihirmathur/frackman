@@ -38,7 +38,7 @@ public:
     
     
     bool checkDirt(int x, int y);
-    bool isNotBoulder(int x, int y);
+ 
     int isDirtOrBoulder(int x, int y);
     
     void createSquirt(int x, int y, GraphObject::Direction dir);
@@ -47,8 +47,9 @@ public:
     base* findNearbyProtestor(base* a, double radius);
     double distance(int x1, int y1, int x2, int y2) const;
     void setXandY(int &x, int &y);
-    void updateBoulderPosition(int x, int y, int t);
+    
     void discover(int x, int y);
+    bool NotBoulder(int x, int y);
    
     
     void increaseBarrelsCollected(){barrels_collected++;}
