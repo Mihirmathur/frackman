@@ -139,11 +139,20 @@ int StudentWorld::move(){
 //            std::cerr<<"Distance from ("<<i<<", 0)"<<grid[i][0]<<"\n";
 //            }
 //    }
+    int probOfHardCore=min(90, int(getLevel()*10  + 30))/10;
     //Spawning protestor
     if (ticks_elapsed%T==0 && totalP<P) {
+        int rnum=rand()%10 + 1;
+        if(rnum<=probOfHardCore){
+            HardcoreProtestor *hp=new HardcoreProtestor(this);
+            m_actor.push_back(hp);
+            totalP++;
+        }
+        else{
         Protestor *p=new Protestor(this);
         totalP++;
         m_actor.push_back(p);
+        }
     }
     
     StudentWorld::setGameStatText();
@@ -318,7 +327,7 @@ base* StudentWorld::findNearbyProtestor(base* a, double radius){
     int y1=a->getY();
     
     for (i=m_actor.begin(); i!=m_actor.end(); i++) {
-        if((*i)->getID()==1){
+        if((*i)->getID()==1 || (*i)->getID()==11){
             int x2=(*i)->getX();
             int y2=(*i)->getY();
             double r=distance(x1, y1, x2, y2);

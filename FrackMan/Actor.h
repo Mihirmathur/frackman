@@ -103,6 +103,7 @@ public:
         moveInDir= rand()%(60-8 + 1) + 8;
         ticksToWait=0;
         freeze=0;
+        score=100;
     }
     virtual ~Protestor(){
     }
@@ -124,12 +125,19 @@ private:
     int moveInDir;
     int freeze;
     int ticksToWait;
+    int score;
 };
 
 //////////////////////////////////////////////////////////////////////////////////
 class HardcoreProtestor: public Protestor{
-    HardcoreProtestor(StudentWorld*w):Protestor(w, IID_HARD_CORE_PROTESTER, 20){}
+public:
+    HardcoreProtestor(StudentWorld*w):Protestor(w, IID_HARD_CORE_PROTESTER, 20){
+        score=250;
+    }
     virtual ~HardcoreProtestor(){}
+    virtual int getID(){return 11;}
+private:
+    int score;
 };
 
 class Boulder :public Dirt{

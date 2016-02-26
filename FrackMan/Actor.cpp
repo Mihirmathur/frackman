@@ -90,7 +90,7 @@ void Protestor::doSomething(){
     }
     if (getHitPoints()<=0 && getState()!=1) {
         w->playSound(SOUND_PROTESTER_GIVE_UP);
-        w->increaseScore(100);
+        w->increaseScore(score);
         setState(1);
         return;
     }
@@ -231,6 +231,11 @@ GraphObject::Direction Protestor::minDir(){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
 //BOULDER
 void Boulder::doSomething(){
     if (!isAlive())
@@ -254,6 +259,7 @@ void Boulder::doSomething(){
                 Protestor *pr=dynamic_cast<Protestor*>(p);
                 pr->annoy(100);
                 w->increaseScore(500);
+                pr->setState(1);
                 pr->setFreeze(15);
                 return;
             }
@@ -261,9 +267,7 @@ void Boulder::doSomething(){
             if(f!=nullptr){
                 f->annoy(100);
             }
-            
         }
-        //Add annoy feature.
         changeState(-2);
     }
     
@@ -397,9 +401,16 @@ void GoldNugget::move(){
         base* p=w->findNearbyProtestor(this, 4.0);
         if(p!=nullptr){
             w->playSound(SOUND_PROTESTER_FOUND_GOLD);
-            Protestor *pr=dynamic_cast<Protestor*>(p);
-            w->increaseScore(25);
-            pr->setState(1);
+            if (p->getID()==1) {
+                Protestor *pr=dynamic_cast<Protestor*>(p);
+                w->increaseScore(25);
+                pr->setState(1);
+            }
+            else{
+                HardcoreProtestor *hpr=dynamic_cast<HardcoreProtestor*>(p);
+                w->increaseScore(50);
+                hpr->setFreeze(std::max(50, int(100- w->getLevel()*10)));
+            }
             setAlive(0);
             return;
         }
