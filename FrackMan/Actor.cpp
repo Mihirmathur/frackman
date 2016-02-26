@@ -89,7 +89,7 @@ void Protestor::doSomething(){
     if (freeze==0) {
         FrackMan* f= w->findNearbyFrackMan(this, 4.0);
         if (f!=nullptr) {
-            //TODO: Play Sound
+            w->playSound(SOUND_PROTESTER_ANNOYED);
             f->annoy(2);
             setFreeze(15);
             ticks_elapsed++;
@@ -210,10 +210,25 @@ void Boulder::doSomething(){
     }
     //State -1: falling
     if (getState()==-1) {
-        
+        w->playSound(SOUND_FALLING_ROCK);
         while(y>=0 && w->checkDirt(x,y)==0){
             moveTo(x, y-1);
             y--;
+            x=getX();
+            y=getY();
+            base *p = w->findNearbyProtestor(this, 3);
+            if(p!=nullptr){
+                Protestor *pr=dynamic_cast<Protestor*>(p);
+                pr->annoy(100);
+                w->increaseScore(500);
+                pr->setFreeze(15);
+                return;
+            }
+            FrackMan* f= w->findNearbyFrackMan(this, 4.0);
+            if(f!=nullptr){
+                f->annoy(100);
+            }
+            
         }
         //Add annoy feature.
         changeState(-2);
@@ -255,7 +270,6 @@ void Squirt::doSomething(){
     //Add protestor annoying.
     base *p = w->findNearbyProtestor(this, 3);
     if(p!=nullptr){
-        //TODO: Play sound
         Protestor *pr=dynamic_cast<Protestor*>(p);
         pr->annoy(2);
         pr->setFreeze(15);
@@ -321,6 +335,7 @@ void OilBarrel::doSomething(){
     if(f!=nullptr){
         w->increaseScore(1000);
         w->increaseBarrelsCollected();
+        w->playSound(getSoundCode());
         setAlive(0);
     }
     
@@ -344,14 +359,13 @@ void GoldNugget::doSomething(){
             f->addGold();
             setAlive(0);
             w->increaseScore(10);
+            w->playSound(getSoundCode());
         }
-        //PLAY SOUND
     }
     else if(canProtestorPick()){
         base* p=w->findNearbyProtestor(this, 4.0);
-        
         if(p!=nullptr){
-            //TODO: Play sound
+            w->playSound(SOUND_PROTESTER_FOUND_GOLD);
             Protestor *pr=dynamic_cast<Protestor*>(p);
             w->increaseScore(25);
             pr->setState(1);
@@ -383,7 +397,7 @@ void SonarKit::doSomething(){
         setAlive(0);
         w->increaseScore(75);
         f->addSonar();
-        //PlaySound
+        w->playSound(getSoundCode());
     }
     ticks_elapsed++;
     
@@ -405,7 +419,7 @@ void WaterPool::doSomething(){
         setAlive(0);
         w->increaseScore(100);
         f->addWater();
-        //PlaySound
+        w->playSound(getSoundCode());
     }
     ticks_elapsed++;
 }

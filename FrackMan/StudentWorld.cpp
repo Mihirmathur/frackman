@@ -57,17 +57,17 @@ int StudentWorld::init(){
     Protestor *p=new Protestor(this);
     totalP++;
     m_actor.push_back(p);
+    
     //Initializing dirt.
     for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
             //Shaft
             if((k>=30 && k<=33) && (l>=4 && l<=59)){}
-            
             else m_dirt[k][l]=new Dirt(this,IID_DIRT, k,l);
         }
     }
-    //Number of boulders, gold and oil
     
+    //Number of boulders, gold and oil
     int B= min(int(getLevel()/2 +2), 6);
     int O=min(int(2+getLevel()),20);
     int G= max(int(5-getLevel()/2),2);
@@ -96,20 +96,39 @@ int StudentWorld::init(){
         g=new GoldNugget(this, x, y, SOUND_GOT_GOODIE, 0,1,0,0);
         m_actor.push_back(g);
     }
+    //Adding SonarKit
     SonarKit*s=new SonarKit(this);
-    WaterPool*w=new WaterPool(this, 20, 30);
     m_actor.push_back(s);
-    m_actor.push_back(w);
+   
     return GWSTATUS_CONTINUE_GAME;
 }
 
 int StudentWorld::move(){
     string t;
+    ticks_elapsed++;
+    int G=getLevel()*25+300;
+    if(ticks_elapsed%G==0){
+        int r=rand()%5;
+        if(r==4){
+           SonarKit*s=new SonarKit(this);
+            m_actor.push_back(s);
+        }
+        else{
+            WaterPool*w;
+            int x=rand()%60;
+            int y=rand()%56;
+            if (m_dirt[x][y]==nullptr) {
+                    w=new WaterPool(this, x, y);
+            }
+            else w=new WaterPool(this, 30, 20);
+             m_actor.push_back(w);
+        }
+    }
     StudentWorld::setGameStatText();
-    //TODO: Update Display text
+    
     
     if(getBarrelsCollected()==min(int(2+getLevel()),20)){
-        //TODO: Play Sound
+        playSound(SOUND_FINISHED_LEVEL);
         return GWSTATUS_FINISHED_LEVEL;
     }
     vector<base*>::iterator i;

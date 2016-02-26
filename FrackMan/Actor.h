@@ -173,17 +173,21 @@ public:
         setVisible(init);
         frack_pickable=frack_pick;
         protest_pickable=protest_pick;
+        sound=soundToPlay;
     }
     virtual ~ActivatingObject(){}
     // Set number of ticks until this object dies
     void setTicksToLive(int n){ticks_tolive=n;}
     int getTicksToLive(){return ticks_tolive;}
+    virtual int getSoundCode(){return sound;}
     bool canFrackmanPick(){return frack_pickable;}
     bool canProtestorPick(){return protest_pickable;}
+    
 private:
     bool frack_pickable;
     bool protest_pickable;
     int ticks_tolive;
+    int sound;
 };
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -19,6 +19,7 @@ public:
 	StudentWorld(std::string assetDir)
 	 : GameWorld(assetDir){
          m_frackman=nullptr;
+         ticks_elapsed=0;
          barrels_collected=0;
          totalP=0;
          for (int i=0; i<64; i++) {
@@ -63,6 +64,7 @@ private:
     int grid[64][64];
     int barrels_collected;
     int totalP;
+    int ticks_elapsed;
 };
 
 #endif // STUDENTWORLD_H_
