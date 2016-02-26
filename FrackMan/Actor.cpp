@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 #include <algorithm>
+#include <queue>
 //FRACKMAN
 
 void FrackMan::doSomething(){
@@ -16,7 +17,7 @@ void FrackMan::doSomething(){
     
     int x=getX();
     int y=getY();
-    
+    w->MarkMaze(x, y, 'F');
     w->remDirt(x, y);
     
     if (w->getKey(key)==true) {
@@ -27,14 +28,17 @@ void FrackMan::doSomething(){
     if (key== KEY_PRESS_LEFT) {
         if (d!=left) setDirection(left);
         else {
-            if(x>0)if(w->NotBoulder(x-1, y))moveTo(x-1,y);
+            if(x>0 && w->NotBoulder(x-1, y) ){
+                w->MarkMaze(x,y, '.');
+                moveTo(x-1,y);
+            }
         }
     }
     if (key== KEY_PRESS_RIGHT) {
         if (d!=right) setDirection(right);
         else {
-            if(x<60){
-                if(w->NotBoulder(x+1, y))
+            if(x<60 && w->NotBoulder(x+1, y)){
+                w->MarkMaze(x,y, '.');
                 moveTo(x+1,y);
             }
         }
@@ -42,13 +46,19 @@ void FrackMan::doSomething(){
     if (key== KEY_PRESS_UP) {
         if (d!=up) setDirection(up);
         else {
-            if(y<60)if(w->NotBoulder(x, y+1))moveTo(x,y+1);
+            if(y<60 && w->NotBoulder(x, y+1)){
+                w->MarkMaze(x,y, '.');
+                moveTo(x,y+1);
+            }
         }
     }
     if (key== KEY_PRESS_DOWN) {
         if (d!=down) setDirection(down);
         else {
-            if(y>0)if(w->NotBoulder(x, y-1))moveTo(x,y-1);
+            if(y>0 && w->NotBoulder(x, y-1)){
+                w->MarkMaze(x,y, '.');
+                moveTo(x,y-1);
+            }
         }
     }
     //For creating squirt.
@@ -72,9 +82,21 @@ void FrackMan::doSomething(){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
+class Coord
+{
+public:
+    Coord(int rr, int cc) : m_r(rr), m_c(cc) {}
+    int r() const { return m_r; }
+    int c() const { return m_c; }
+private:
+    int m_r;
+    int m_c;
+};
+
 void Protestor::doSomething(){
     if (!isAlive())
         return;
+    //Stops Protestor for freeze number of ticks.
     if (freeze>0) {
         freeze--;
         return;
@@ -95,6 +117,11 @@ void Protestor::doSomething(){
         return;
     }
     if (getState()==1) {
+        
+//        std::queue <Coord> q;
+//        q.push(Coord(x,y));
+//        int endX=60, endY=60;
+//        w->MarkMaze(x, y, '-');
         Direction d=minDir();
         setDirection(d);
         if(d==right)moveTo(x+1, y);
@@ -109,7 +136,6 @@ void Protestor::doSomething(){
     if (freeze==0) {
         FrackMan* f= w->findNearbyFrackMan(this, 4.0);
         if (f!=nullptr) {
-            w->playSound(SOUND_PROTESTER_ANNOYED);
             w->playSound(SOUND_PROTESTER_YELL);
             f->annoy(2);
             setFreeze(15);
@@ -117,7 +143,8 @@ void Protestor::doSomething(){
             return;
         }
     }
-   
+    
+    //If number of steps<=0 a random direction is assigned to protestor.
     if(getSteps()<=0){
         moveInDir= rand()%(10) + 8;
         while (1) {
@@ -158,7 +185,7 @@ void Protestor::doSomething(){
         if (getSteps()>0) {
             dir=getDirection();
             if (dir==left) {
-                //If there is no dirt or boulder, protestor moves.
+                //If there is no dirt or boulder, protestor moves and number of steps is reduced.
                 if (w->isDirtOrBoulder(x-1, y)==0 && w->isDirtOrBoulder(x-1, y+1)!=1 && w->isDirtOrBoulder(x-1, y+2)!=1 && w->isDirtOrBoulder(x-1, y+3)!=1) {
                     moveTo(x-1, y);
                     reduceSteps();
@@ -251,7 +278,6 @@ void Boulder::doSomething(){
         w->playSound(SOUND_FALLING_ROCK);
         while(y>=0 && w->checkDirt(x,y)==0){
             moveTo(x, y-1);
-            y--;
             x=getX();
             y=getY();
             base *p = w->findNearbyProtestor(this, 3);
@@ -275,7 +301,6 @@ void Boulder::doSomething(){
     if(getState()==0){
         ticks_elapsed++;
         if (ticks_elapsed==30){
-           
         changeState(-1);
         }
     }
@@ -309,7 +334,9 @@ void Squirt::doSomething(){
     if(p!=nullptr){
         Protestor *pr=dynamic_cast<Protestor*>(p);
         pr->annoy(2);
-        pr->setFreeze(15);
+        w->playSound(SOUND_PROTESTER_ANNOYED);
+        int n = std::max(50, int(100- w->getLevel()*10));
+        pr->setFreeze(n);
         setAlive(0);
         return;
     }
