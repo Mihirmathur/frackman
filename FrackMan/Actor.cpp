@@ -6,13 +6,14 @@
 void FrackMan::doSomething(){
     if (!isAlive()) 
         return;
+    StudentWorld* w=getWorld();
     if(getHitPoints()<=0){
         setAlive(0);
-        //TODO: Dying Sound
+        w->playSound(SOUND_PLAYER_GIVE_UP);
     }
     Direction d;
     int key;
-    StudentWorld* w=getWorld();
+    
     int x=getX();
     int y=getY();
     
@@ -50,14 +51,14 @@ void FrackMan::doSomething(){
             if(y>0)if(w->NotBoulder(x, y-1))moveTo(x,y-1);
         }
     }
-    if (key==KEY_PRESS_SPACE) {
-        if (getWaterCount()>0) {
+    //For creating squirt.
+    if (key==KEY_PRESS_SPACE && getWaterCount()>0) {
             Direction dir=getDirection();
             w->createSquirt(x, y, dir);
+            w->playSound(SOUND_PLAYER_SQUIRT);
             reduceWater();
-        }
-        
     }
+        
     if ((key=='z' || key=='Z') && getSonarCount()>0) {
         reduceSonar();
         w->discover(x, y);
@@ -83,6 +84,7 @@ void Protestor::doSomething(){
     int x=getX();
     int y=getY();
     if (getHitPoints()<=0) {
+        w->playSound(SOUND_PROTESTER_GIVE_UP);
         setState(1);
         return;
     }
@@ -90,6 +92,7 @@ void Protestor::doSomething(){
         FrackMan* f= w->findNearbyFrackMan(this, 4.0);
         if (f!=nullptr) {
             w->playSound(SOUND_PROTESTER_ANNOYED);
+            w->playSound(SOUND_PROTESTER_YELL);
             f->annoy(2);
             setFreeze(15);
             ticks_elapsed++;
@@ -316,15 +319,17 @@ void Squirt::doSomething(){
 
 //////////////////////////////////////////////////////////////////////////////////
 //ACTIVATING OBJECT
-
+void ActivatingObject::doSomething(){
+    if (!isAlive()) {
+        return;
+    }
+    move();
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////
 //OILBARREL
-void OilBarrel::doSomething(){
-    if (!isAlive()) {
-        return;
-    }
+void OilBarrel::move(){
     StudentWorld*w=getWorld();
     base* f= w->findNearbyFrackMan(this, 4.0);
     if(!isVisible() && f!=nullptr){
@@ -338,15 +343,11 @@ void OilBarrel::doSomething(){
         w->playSound(getSoundCode());
         setAlive(0);
     }
-    
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////
 //GOLD NUGGET
-void GoldNugget::doSomething(){
-    if (!isAlive())return;
-    
+void GoldNugget::move(){
     StudentWorld*w=getWorld();
     FrackMan* f= w->findNearbyFrackMan(this, 4.0);
     if(!isVisible() && f!=nullptr){
@@ -383,9 +384,7 @@ void GoldNugget::doSomething(){
 
 //////////////////////////////////////////////////////////////////////////////////
 //SONAR KIT
-void SonarKit::doSomething(){
-    if (!isAlive())return;
-    
+void SonarKit::move(){
     StudentWorld*w=getWorld();
     int t= std::min(100, int(300 - 10*(w->getLevel())));
     if (ticks_elapsed == t) {
@@ -400,14 +399,11 @@ void SonarKit::doSomething(){
         w->playSound(getSoundCode());
     }
     ticks_elapsed++;
-    
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 //WATER POOL
-void WaterPool::doSomething(){
-    if (!isAlive())return;
-    
+void WaterPool::move(){
     StudentWorld*w=getWorld();
     int t= std::min(100, int(300 - 10*(w->getLevel())));
     if (ticks_elapsed == t) {

@@ -7,6 +7,7 @@
 #include "Actor.h"
 #include <vector>
 #include <string>
+#include <iostream>
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 class base;
@@ -21,9 +22,8 @@ public:
          m_frackman=nullptr;
          ticks_elapsed=0;
          barrels_collected=0;
-         totalP=0;
          for (int i=0; i<64; i++) {
-             for (int j=0; j<64; j++) {
+             for (int j=0; j<60; j++) {
                  grid[i][j]=0;
              }
          }
@@ -36,7 +36,6 @@ public:
     
     void setGameStatText();
     void remDirt(int x, int y);
-    
     
     bool checkDirt(int x, int y);
  
@@ -61,7 +60,7 @@ private:
     std::vector<base*> m_actor;
     FrackMan* m_frackman;
     Dirt* m_dirt[64][64];
-    int grid[64][64];
+    double grid[64][64];
     int barrels_collected;
     int totalP;
     int ticks_elapsed;

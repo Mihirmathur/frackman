@@ -67,7 +67,7 @@ public:
     FrackMan(StudentWorld* w):Living(w, IID_PLAYER){
         water=5;
         gold=0;
-        sonar=0;
+        sonar=1;
     }
     ~FrackMan(){
     
@@ -180,6 +180,8 @@ public:
     void setTicksToLive(int n){ticks_tolive=n;}
     int getTicksToLive(){return ticks_tolive;}
     virtual int getSoundCode(){return sound;}
+    virtual void  doSomething();
+    virtual void move()=0;
     bool canFrackmanPick(){return frack_pickable;}
     bool canProtestorPick(){return protest_pickable;}
     
@@ -198,7 +200,7 @@ public:
     OilBarrel(StudentWorld* world, int x, int y):ActivatingObject(world, x, y, IID_BARREL, SOUND_FOUND_OIL, 0, 1, 0){
     }
     ~OilBarrel(){}
-    virtual void doSomething();
+    virtual void move();
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -211,7 +213,7 @@ public:
         setTicksToLive(100);
     }
     ~GoldNugget(){}
-    virtual void doSomething();
+    virtual void move();
     void setState(bool t){state = t;}
     bool getState(){return state;}
 private:
@@ -227,7 +229,7 @@ public:
         ticks_elapsed=0;
     }
     ~SonarKit(){}
-    virtual void doSomething();
+    virtual void move();
 private:
     int ticks_elapsed;
 };
@@ -238,7 +240,7 @@ class WaterPool : public ActivatingObject{
 public:
     WaterPool(StudentWorld* w, int x, int y): ActivatingObject(w, x, y, IID_WATER_POOL, SOUND_GOT_GOODIE, 1, 1, 0){ticks_elapsed=0;}
     ~WaterPool(){}
-    virtual void doSomething();
+    virtual void move();
 private:
     int ticks_elapsed;
 };

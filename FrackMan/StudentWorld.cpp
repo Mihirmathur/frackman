@@ -25,6 +25,7 @@ StudentWorld::~StudentWorld(){
     for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
+            grid[k][l]=0;
         }
     }
     //Delete FrackMan
@@ -41,7 +42,7 @@ void StudentWorld::setGameStatText(){
     int sonar = m_frackman->getSonarCount();
 
     int oil=min(int(2+getLevel()),20)- getBarrelsCollected();
-    ostringstream oss;  // oss is a name of our choosing.
+    ostringstream oss;
     oss.setf(ios::fixed);
     // “Scr: 0321000 Lvl: 52 Lives: 3 Hlth: 80% Water: 20 Gld: 3 Sonar: 1 Oil Left: 2”
     //Add Sonar and Oil
@@ -52,7 +53,8 @@ void StudentWorld::setGameStatText(){
 
 int StudentWorld::init(){
     barrels_collected=0;
-    //Initializinf FrackMan
+    totalP=0;
+    //Initializing FrackMan
     m_frackman = new FrackMan(this);
     Protestor *p=new Protestor(this);
     totalP++;
@@ -63,7 +65,10 @@ int StudentWorld::init(){
         for (int l=0; l<60; l++) {
             //Shaft
             if((k>=30 && k<=33) && (l>=4 && l<=59)){}
-            else m_dirt[k][l]=new Dirt(this,IID_DIRT, k,l);
+            else {
+                m_dirt[k][l]=new Dirt(this,IID_DIRT, k,l);
+                grid[k][l]=-1;
+            }
         }
     }
     
@@ -106,7 +111,11 @@ int StudentWorld::init(){
 int StudentWorld::move(){
     string t;
     ticks_elapsed++;
+    int T=max(25, int(200-getLevel()));
+    int P=min(15, int(getLevel()*1.5 + 2));
     int G=getLevel()*25+300;
+    
+    //Randomly spawns SonarKit or WaterPool
     if(ticks_elapsed%G==0){
         int r=rand()%5;
         if(r==4){
@@ -124,9 +133,25 @@ int StudentWorld::move(){
              m_actor.push_back(w);
         }
     }
+    
+    //Spawning protestor
+    if (ticks_elapsed%T==0 && totalP<P) {
+        Protestor *p=new Protestor(this);
+        totalP++;
+        m_actor.push_back(p);
+    }
+    
     StudentWorld::setGameStatText();
     
+    for (int i=0; i<64; i++) {
+        for (int j=0; j<60; j++) {
+            if(grid[i][j]!=-1){
+                grid[i][j]=distance(60, 60, i, j);
+            }
+        }
+    }
     
+    //If level complete.
     if(getBarrelsCollected()==min(int(2+getLevel()),20)){
         playSound(SOUND_FINISHED_LEVEL);
         return GWSTATUS_FINISHED_LEVEL;
@@ -138,9 +163,7 @@ int StudentWorld::move(){
     //Each actor moves.
     for (i=m_actor.begin(); i!=m_actor.end(); i++) {
         if ((*i)->isAlive()) {
-            
         (*i)->doSomething();
-        
         //If FrackMan dies
         if(!m_frackman->isAlive()){
             decLives();
@@ -176,6 +199,7 @@ void StudentWorld::cleanUp(){
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
             m_dirt [k][l]=nullptr;
+            grid[k][l]=0;
         }
     }
     delete m_frackman;
@@ -186,13 +210,15 @@ void StudentWorld::remDirt(int x , int y){
         for (int l=y; l<=y+3; l++) {
             if ((k>=0 && k<64) && (l>=0 && l<60) && m_dirt[k][l]!=nullptr) {
                 delete m_dirt[k][l];
+                grid[k][l]=0;
                 m_dirt[k][l]=nullptr;
-                //GameController::getInstance().playSound(SOUND_DIG);
+                //playSound(SOUND_DIG);
             }
         }
     }
 }
 
+//Checks to see if there is dirt below x,y
 bool StudentWorld::checkDirt(int x, int y){
     if (m_dirt[x][y-1]!=nullptr)return 1;
     if (m_dirt[x+1][y-1]!=nullptr)return 1;
@@ -226,6 +252,7 @@ bool StudentWorld::NotBoulder(int x, int y){
     return true;
 }
 
+//Creates a new squirt.
 void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
     Squirt*s;
     switch (dir) {
@@ -248,10 +275,12 @@ void StudentWorld::createSquirt(int x, int y, GraphObject::Direction dir){
     }
 }
 
+//Calculate Euclidian distance between x1, y1, x2, y2.
 double StudentWorld::distance(int x1, int y1, int x2, int y2) const{
     return pow((pow(x2-x1, 2) + pow(y2-y1, 2)), .5);
 }
 
+//Sets a random x and y value to actors.
 void StudentWorld::setXandY(int &x, int &y){
     vector<base*>::iterator it;
     int t, x2, y2;
@@ -293,7 +322,7 @@ base* StudentWorld::findNearbyProtestor(base* a, double radius){
     }
     return nullptr;
 }
-
+//Sets visible all actors in radius 12.
 void StudentWorld::discover(int x, int y){
     vector<base*>::iterator i;
     int x2, y2;
