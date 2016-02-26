@@ -86,8 +86,8 @@ class Coord
 {
 public:
     Coord(int rr, int cc) : m_r(rr), m_c(cc) {}
-    int r() const { return m_r; }
-    int c() const { return m_c; }
+    int X() const { return m_r; }
+    int Y() const { return m_c; }
 private:
     int m_r;
     int m_c;
@@ -117,11 +117,19 @@ void Protestor::doSomething(){
         return;
     }
     if (getState()==1) {
-        
+//        
 //        std::queue <Coord> q;
 //        q.push(Coord(x,y));
+//        int curX, curY;
 //        int endX=60, endY=60;
 //        w->MarkMaze(x, y, '-');
+//        while (!q.empty()) {
+//            Coord c=q.front();
+//            curX=c.X();
+//            curY=c.Y();
+//            if(curX==endX && curY==endY)return;
+//            
+//        }
         Direction d=minDir();
         setDirection(d);
         if(d==right)moveTo(x+1, y);
