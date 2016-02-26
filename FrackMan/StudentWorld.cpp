@@ -90,7 +90,7 @@ int StudentWorld::init(){
     for(i = 0; i<B; i++){
         setXandY(x,y);
         b=new Boulder(this, IID_BOULDER, x, y);
-        remDirt(x, y);
+        remDirt(x, y, 0);
         m_actor.push_back(b);
     }
     //Spawning OilBarrels
@@ -142,14 +142,6 @@ int StudentWorld::move(){
         }
     }
 
-    if(ticks_elapsed==200){
-        for (int j=60; j>=0; j--) {
-            for (int i=0; i<=60; i++) {
-                std::cerr<<maze[i][j];
-            }
-            std::cerr<<endl;
-        }
-    }
 //    if(ticks_elapsed==300){
 //        for (int i=0; i<=60; i++) {
 //            std::cerr<<"Distance from ("<<i<<", 0)"<<grid[i][0]<<"\n";
@@ -230,7 +222,7 @@ void StudentWorld::cleanUp(){
             delete m_dirt[k][l];
             m_dirt [k][l]=nullptr;
             grid[k][l]=distance(60, 60, k, l);
-            maze[k][l]='.';
+            maze[l][k]='.';
         }
     }
     delete m_frackman;
@@ -240,18 +232,23 @@ void StudentWorld::cleanUp(){
 //MODIFIERS
 
 //Removes  dirt
-void StudentWorld::remDirt(int x , int y){
+void StudentWorld::remDirt(int x , int y, int opt){
+    int didDelete=0;
     for (int k=x; k<=x+3; k++) {
+        didDelete=0;
         for (int l=y; l<=y+3; l++) {
             if ((k>=0 && k<64) && (l>=0 && l<60) && m_dirt[k][l]!=nullptr) {
                 delete m_dirt[k][l];
                 grid[k][l]=distance(60, 60, k, l);
-                maze[k][l]='.';
+                maze[l][k]='.';
                 m_dirt[k][l]=nullptr;
+                didDelete=1;
                 //playSound(SOUND_DIG);
             }
         }
+        
     }
+    if(didDelete==1 && opt==1)std::cerr<<"R";
 }
 
 //Creates a new squirt.
@@ -355,7 +352,7 @@ double StudentWorld::getGrid(int x, int y){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-//HLPER FUNCTIONS
+//HELPER FUNCTIONS
 
 //Calculate Euclidian distance between x1, y1, x2, y2.
 double StudentWorld::distance(int x1, int y1, int x2, int y2) const{
@@ -396,9 +393,27 @@ void StudentWorld::discover(int x, int y){
 }
 
 void StudentWorld::MarkMaze(int x, int y, char d){
-    maze[x][y]=d;
+    maze[y][x]=d;
 }
 
+bool StudentWorld::Solve(int x, int y){
+    maze[y][x]='-';
+    if(x==60 && y==60)return true;
+    if (x>0 && maze[y][x-1]=='.' && Solve(x-1, y)) {
+        return true;
+    }
+    if (x<60 && maze[y][x+1]=='.' && Solve(x+1, y)) {
+        return true;
+    }
+    if (y>0 && maze[y-1][x]=='.' && Solve(x, y-1)) {
+        return true;
+    }
+    if (y<60 && maze[y+1][x]=='.' && Solve(x, y+1)) {
+        return true;
+    }
+    maze[y][x]='.';
+    return false;
+}
 //////////////////////////////////////////////////////////////////////////////////
 
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp

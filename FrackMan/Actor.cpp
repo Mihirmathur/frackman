@@ -18,7 +18,7 @@ void FrackMan::doSomething(){
     int x=getX();
     int y=getY();
     w->MarkMaze(x, y, 'F');
-    w->remDirt(x, y);
+    w->remDirt(x, y, 1);
     
     if (w->getKey(key)==true) {
     d=getDirection();
@@ -117,7 +117,7 @@ void Protestor::doSomething(){
         return;
     }
     if (getState()==1) {
-//        
+        
 //        std::queue <Coord> q;
 //        q.push(Coord(x,y));
 //        int curX, curY;
@@ -130,6 +130,15 @@ void Protestor::doSomething(){
 //            if(curX==endX && curY==endY)return;
 //            
 //        }
+//        Direction d=right;
+//        switch (d) {
+//            case right:
+//                if(w->Solve(x+1, y))moveTo(x+1, y);
+//                break;
+//                
+//            default:
+//                break;
+//       }
         Direction d=minDir();
         setDirection(d);
         if(d==right)moveTo(x+1, y);
@@ -344,7 +353,8 @@ void Squirt::doSomething(){
         pr->annoy(2);
         w->playSound(SOUND_PROTESTER_ANNOYED);
         int n = std::max(50, int(100- w->getLevel()*10));
-        pr->setFreeze(n);
+        if(pr->getHitPoints()>0)pr->setFreeze(n);
+        else pr->setFreeze(2);
         setAlive(0);
         return;
     }

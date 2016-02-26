@@ -43,7 +43,7 @@ public:
     void setGameStatText();
     
     //Modifiers:
-    void remDirt(int x, int y);
+    void remDirt(int x, int y, int opt);
     void createSquirt(int x, int y, GraphObject::Direction dir);
     void addGoldForProtestor(int x, int y);
     void increaseBarrelsCollected(){barrels_collected++;}
@@ -56,6 +56,7 @@ public:
     bool checkDirt(int x, int y);
     int isDirtOrBoulder(int x, int y);
     bool NotBoulder(int x, int y);
+    bool Solve(int x, int y);
     FrackMan* findNearbyFrackMan(base* a, double radius) const;
     base* findNearbyProtestor(base* a, double radius);
     
