@@ -61,6 +61,7 @@ void FrackMan::doSomething(){
         
     if ((key=='z' || key=='Z') && getSonarCount()>0) {
         reduceSonar();
+        w->playSound(SOUND_SONAR);
         w->discover(x, y);
     }
         if(key==KEY_PRESS_TAB && getGoldCount()>0){
@@ -83,11 +84,28 @@ void Protestor::doSomething(){
     Direction dir;
     int x=getX();
     int y=getY();
-    if (getHitPoints()<=0) {
+    if(getState()==1 && x==60 && y==60){
+        setAlive(0);
+        w->reduceProtestor();
+    }
+    if (getHitPoints()<=0 && getState()!=1) {
         w->playSound(SOUND_PROTESTER_GIVE_UP);
+        w->increaseScore(100);
         setState(1);
         return;
     }
+    if (getState()==1) {
+        Direction d=minDir();
+        setDirection(d);
+        if(d==right)moveTo(x+1, y);
+        if(d==left)moveTo(x-1, y);
+        if(d==up)moveTo(x, y+1);
+        if(d==down)moveTo(x, y-1);
+        ticks_elapsed++;
+        return;
+    }
+    
+    
     if (freeze==0) {
         FrackMan* f= w->findNearbyFrackMan(this, 4.0);
         if (f!=nullptr) {
@@ -134,6 +152,7 @@ void Protestor::doSomething(){
     if(ticksToWait==0 || (ticks_elapsed%ticksToWait)==0){
         x=getX();
         y=getY();
+       
         ticksToWait = std::max(0, int(3-(w->getLevel()/4)));
         //If number of steps that can be taken is positive.
         if (getSteps()>0) {
@@ -199,6 +218,17 @@ void Protestor::doSomething(){
     
 }
 
+GraphObject::Direction Protestor::minDir(){
+    int x=getX();
+    int y=getY();
+    StudentWorld *w=getWorld();
+    double distances[]={w->getGrid(x-1, y), w->getGrid(x+1, y), w->getGrid(x, y-1), w->getGrid(x, y+1)};
+    std::sort(distances, distances + 4);
+    if (distances[0]==w->getGrid(x-1, y))return left;
+    if (distances[0]==w->getGrid(x+1, y))return right;
+    if (distances[0]==w->getGrid(x, y-1))return down;
+    else return up;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //BOULDER

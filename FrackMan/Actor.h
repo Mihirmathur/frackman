@@ -115,6 +115,8 @@ public:
     
     int getState(){return state;}
     int getSteps(){return moveInDir;}
+    
+    Direction minDir();
 private:
     //Rest State: 0, Leave Oil Field State: 1,
     int state;

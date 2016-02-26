@@ -25,7 +25,7 @@ StudentWorld::~StudentWorld(){
     for (int k=0; k<64; k++) {
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
-            grid[k][l]=0;
+            grid[k][l]=distance(60, 60, k, l);
         }
     }
     //Delete FrackMan
@@ -67,7 +67,7 @@ int StudentWorld::init(){
             if((k>=30 && k<=33) && (l>=4 && l<=59)){}
             else {
                 m_dirt[k][l]=new Dirt(this,IID_DIRT, k,l);
-                grid[k][l]=-1;
+                grid[k][l]=10000;
             }
         }
     }
@@ -134,6 +134,11 @@ int StudentWorld::move(){
         }
     }
     
+//    if(ticks_elapsed==300){
+//        for (int i=0; i<=60; i++) {
+//            std::cerr<<"Distance from ("<<i<<", 0)"<<grid[i][0]<<"\n";
+//            }
+//    }
     //Spawning protestor
     if (ticks_elapsed%T==0 && totalP<P) {
         Protestor *p=new Protestor(this);
@@ -144,8 +149,8 @@ int StudentWorld::move(){
     StudentWorld::setGameStatText();
     
     for (int i=0; i<64; i++) {
-        for (int j=0; j<60; j++) {
-            if(grid[i][j]!=-1){
+        for (int j=0; j<61; j++) {
+            if(grid[i][j]!=10000){
                 grid[i][j]=distance(60, 60, i, j);
             }
         }
@@ -199,7 +204,7 @@ void StudentWorld::cleanUp(){
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
             m_dirt [k][l]=nullptr;
-            grid[k][l]=0;
+            grid[k][l]=distance(60, 60, k, l);;
         }
     }
     delete m_frackman;
@@ -210,7 +215,7 @@ void StudentWorld::remDirt(int x , int y){
         for (int l=y; l<=y+3; l++) {
             if ((k>=0 && k<64) && (l>=0 && l<60) && m_dirt[k][l]!=nullptr) {
                 delete m_dirt[k][l];
-                grid[k][l]=0;
+                grid[k][l]=distance(60, 60, k, l);
                 m_dirt[k][l]=nullptr;
                 //playSound(SOUND_DIG);
             }
@@ -338,5 +343,14 @@ void StudentWorld::discover(int x, int y){
 void StudentWorld::addGoldForProtestor(int x, int y){
     GoldNugget*g=new GoldNugget(this, x, y, SOUND_GOT_GOODIE, 1,0,1,1);
     m_actor.push_back(g);
+}
+
+//Gets distance from position to (60, 60)
+double StudentWorld::getGrid(int x, int y){
+    if((x>=0 && x<=60) && (y>=0 && y<=60)){
+        
+        return grid[x][y];
+    }
+    else return 10000;
 }
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
