@@ -17,7 +17,6 @@ void FrackMan::doSomething(){
     
     int x=getX();
     int y=getY();
-    w->MarkMaze(x, y, 'F');
     w->remDirt(x, y, 1);
     
     if (w->getKey(key)==true) {
@@ -29,7 +28,6 @@ void FrackMan::doSomething(){
         if (d!=left) setDirection(left);
         else {
             if(x>0 && w->NotBoulder(x-1, y) ){
-                w->MarkMaze(x,y, '.');
                 moveTo(x-1,y);
             }
         }
@@ -38,7 +36,6 @@ void FrackMan::doSomething(){
         if (d!=right) setDirection(right);
         else {
             if(x<60 && w->NotBoulder(x+1, y)){
-                w->MarkMaze(x,y, '.');
                 moveTo(x+1,y);
             }
         }
@@ -47,7 +44,6 @@ void FrackMan::doSomething(){
         if (d!=up) setDirection(up);
         else {
             if(y<60 && w->NotBoulder(x, y+1)){
-                w->MarkMaze(x,y, '.');
                 moveTo(x,y+1);
             }
         }
@@ -56,7 +52,6 @@ void FrackMan::doSomething(){
         if (d!=down) setDirection(down);
         else {
             if(y>0 && w->NotBoulder(x, y-1)){
-                w->MarkMaze(x,y, '.');
                 moveTo(x,y-1);
             }
         }
@@ -82,16 +77,7 @@ void FrackMan::doSomething(){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-class Coord
-{
-public:
-    Coord(int rr, int cc) : m_r(rr), m_c(cc) {}
-    int X() const { return m_r; }
-    int Y() const { return m_c; }
-private:
-    int m_r;
-    int m_c;
-};
+
 
 void Protestor::doSomething(){
     if (!isAlive())
@@ -118,18 +104,7 @@ void Protestor::doSomething(){
     }
     if (getState()==1) {
         
-//        std::queue <Coord> q;
-//        q.push(Coord(x,y));
-//        int curX, curY;
-//        int endX=60, endY=60;
-//        w->MarkMaze(x, y, '-');
-//        while (!q.empty()) {
-//            Coord c=q.front();
-//            curX=c.X();
-//            curY=c.Y();
-//            if(curX==endX && curY==endY)return;
-//            
-//        }
+
 //        Direction d=right;
 //        switch (d) {
 //            case right:
@@ -262,14 +237,15 @@ void Protestor::doSomething(){
     
 }
 
+//Returns the direction of minimum distance to 60,60
 GraphObject::Direction Protestor::minDir(){
     int x=getX();
     int y=getY();
     StudentWorld *w=getWorld();
     double distances[]={w->getGrid(x-1, y), w->getGrid(x+1, y), w->getGrid(x, y-1), w->getGrid(x, y+1)};
     std::sort(distances, distances + 4);
-    if (distances[0]==w->getGrid(x-1, y))return left;
     if (distances[0]==w->getGrid(x+1, y))return right;
+    if (distances[0]==w->getGrid(x-1, y))return left;
     if (distances[0]==w->getGrid(x, y-1))return down;
     else return up;
 }

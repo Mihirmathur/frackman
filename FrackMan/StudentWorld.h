@@ -20,19 +20,7 @@ class StudentWorld : public GameWorld
 public:
 	StudentWorld(std::string assetDir)
 	 : GameWorld(assetDir){
-         m_frackman=nullptr;
-         ticks_elapsed=0;
-         barrels_collected=0;
-         for (int i=0; i<64; i++) {
-             for (int j=0; j<61; j++) {
-                 grid[i][j]=1000;
-             }
-         }
-         for (int i=0; i<64; i++) {
-             for (int j=0; j<61; j++) {
-                 maze[i][j]='.';
-             }
-         }
+         
      }
 
     virtual ~StudentWorld();
@@ -48,7 +36,6 @@ public:
     void addGoldForProtestor(int x, int y);
     void increaseBarrelsCollected(){barrels_collected++;}
     void reduceProtestor(){totalP--;}
-    void MarkMaze(int x, int y, char d);
     
     //Accessors:
     double getGrid(int x, int y);
@@ -64,6 +51,8 @@ public:
     double distance(int x1, int y1, int x2, int y2) const;
     void setXandY(int &x, int &y);
     void discover(int x, int y);
+    bool isNavigable(int x1, int y1, int x2, int y2);
+    bool NavigateHelp(double d[64][61], int x1, int y1, int x2, int y2);
     
 private:
     int key_val;

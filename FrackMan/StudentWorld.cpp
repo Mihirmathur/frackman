@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <queue>
 using namespace std;
-
+class Direction;
 GameWorld* createStudentWorld(string assetDir){
 	return new StudentWorld(assetDir);
 }
@@ -55,6 +55,19 @@ void StudentWorld::setGameStatText(){
 
 //Init Function
 int StudentWorld::init(){
+    m_frackman=nullptr;
+    ticks_elapsed=0;
+    barrels_collected=0;
+    for (int i=0; i<64; i++) {
+        for (int j=0; j<61; j++) {
+            grid[i][j]=0;
+        }
+    }
+    for (int i=0; i<64; i++) {
+        for (int j=0; j<61; j++) {
+            maze[i][j]='.';
+        }
+    }
     barrels_collected=0;
     totalP=0;
     //Initializing FrackMan
@@ -201,12 +214,10 @@ int StudentWorld::move(){
         }
         else i++;
     }
-    
     if(!m_frackman->isAlive()){
         decLives();
         return GWSTATUS_PLAYER_DIED;
     }
-    
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -235,7 +246,6 @@ void StudentWorld::cleanUp(){
 void StudentWorld::remDirt(int x , int y, int opt){
     int didDelete=0;
     for (int k=x; k<=x+3; k++) {
-        didDelete=0;
         for (int l=y; l<=y+3; l++) {
             if ((k>=0 && k<64) && (l>=0 && l<60) && m_dirt[k][l]!=nullptr) {
                 delete m_dirt[k][l];
@@ -243,12 +253,12 @@ void StudentWorld::remDirt(int x , int y, int opt){
                 maze[l][k]='.';
                 m_dirt[k][l]=nullptr;
                 didDelete=1;
-                //playSound(SOUND_DIG);
+                
             }
         }
         
     }
-    if(didDelete==1 && opt==1)std::cerr<<"R";
+    if(didDelete==1 && opt==1)playSound(SOUND_DIG);
 }
 
 //Creates a new squirt.
@@ -392,28 +402,29 @@ void StudentWorld::discover(int x, int y){
     }
 }
 
-void StudentWorld::MarkMaze(int x, int y, char d){
-    maze[y][x]=d;
+//Returns true if path from  (x1, y1) to (x2,y2) is navigable
+bool StudentWorld::isNavigable(int x1, int y1, int x2, int y2){
+    double g[64][61];
+        for (int i=0; i<64; i++) {
+            for (int j=0; j<61; j++) {
+                g[i][j]=grid[i][j];
+            }
+        }
+    return NavigateHelp(g, x1, y1, x2, y2);
 }
 
-bool StudentWorld::Solve(int x, int y){
-    maze[y][x]='-';
-    if(x==60 && y==60)return true;
-    if (x>0 && maze[y][x-1]=='.' && Solve(x-1, y)) {
-        return true;
-    }
-    if (x<60 && maze[y][x+1]=='.' && Solve(x+1, y)) {
-        return true;
-    }
-    if (y>0 && maze[y-1][x]=='.' && Solve(x, y-1)) {
-        return true;
-    }
-    if (y<60 && maze[y+1][x]=='.' && Solve(x, y+1)) {
-        return true;
-    }
-    maze[y][x]='.';
+bool StudentWorld::NavigateHelp(double g[64][61], int x1, int y1, int x2, int y2){
+    if((x1<=0 || x1>=60) || (y1<=0 || y1>=60))return false;
+    if(x1==x2 && y1==y2)return true;
+    g[x1][y1]=10001;
+    if(NavigateHelp(g, x1+1, y1, x2, y2))return true;
+    if(NavigateHelp(g, x1, y1+1, x2, y2))return true;
+    if(NavigateHelp(g, x1-1, y1, x2, y2))return true;
+    if(NavigateHelp(g, x1, y1-1, x2, y2))return true;
     return false;
 }
+
+
 //////////////////////////////////////////////////////////////////////////////////
 
 // Students:  Add code to this file (if you wish), StudentWorld.h, Actor.h and Actor.cpp
