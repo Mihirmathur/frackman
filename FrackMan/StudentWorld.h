@@ -43,7 +43,6 @@ public:
     bool checkDirt(int x, int y);
     int isDirtOrBoulder(int x, int y);
     bool NotBoulder(int x, int y);
-    bool Solve(int x, int y);
     FrackMan* findNearbyFrackMan(base* a, double radius) const;
     base* findNearbyProtestor(base* a, double radius);
     

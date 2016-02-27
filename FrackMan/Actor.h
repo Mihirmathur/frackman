@@ -55,6 +55,7 @@ public:
         setVisible(1);
     }
     virtual ~Living(){}
+    virtual void doSomething()=0;
     virtual void annoy(int amt){hitPoints-=amt;};
     virtual int getHitPoints(){return hitPoints;}
 private:

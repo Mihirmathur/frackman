@@ -27,7 +27,6 @@ StudentWorld::~StudentWorld(){
         for (int l=0; l<60; l++) {
             delete m_dirt[k][l];
             grid[k][l]=distance(60, 60, k, l);
-            maze[k][l]='.';
         }
     }
     //Delete FrackMan
@@ -55,17 +54,11 @@ void StudentWorld::setGameStatText(){
 
 //Init Function
 int StudentWorld::init(){
-    m_frackman=nullptr;
     ticks_elapsed=0;
     barrels_collected=0;
     for (int i=0; i<64; i++) {
         for (int j=0; j<61; j++) {
             grid[i][j]=0;
-        }
-    }
-    for (int i=0; i<64; i++) {
-        for (int j=0; j<61; j++) {
-            maze[i][j]='.';
         }
     }
     barrels_collected=0;
@@ -233,7 +226,6 @@ void StudentWorld::cleanUp(){
             delete m_dirt[k][l];
             m_dirt [k][l]=nullptr;
             grid[k][l]=distance(60, 60, k, l);
-            maze[l][k]='.';
         }
     }
     delete m_frackman;
@@ -256,7 +248,6 @@ void StudentWorld::remDirt(int x , int y, int opt){
                 
             }
         }
-        
     }
     if(didDelete==1 && opt==1)playSound(SOUND_DIG);
 }

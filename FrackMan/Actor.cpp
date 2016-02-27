@@ -63,7 +63,7 @@ void FrackMan::doSomething(){
             w->playSound(SOUND_PLAYER_SQUIRT);
             reduceWater();
     }
-        
+    //For Sonar sound
     if ((key=='z' || key=='Z') && getSonarCount()>0) {
         reduceSonar();
         w->playSound(SOUND_SONAR);
@@ -102,18 +102,10 @@ void Protestor::doSomething(){
         setState(1);
         return;
     }
+    //If state=exit field, Set the direction to direction of
+    //Minimum steps to get to exit.
     if (getState()==1) {
         
-
-//        Direction d=right;
-//        switch (d) {
-//            case right:
-//                if(w->Solve(x+1, y))moveTo(x+1, y);
-//                break;
-//                
-//            default:
-//                break;
-//       }
         Direction d=minDir();
         setDirection(d);
         if(d==right)moveTo(x+1, y);
@@ -123,7 +115,6 @@ void Protestor::doSomething(){
         ticks_elapsed++;
         return;
     }
-    
     
     if (freeze==0) {
         FrackMan* f= w->findNearbyFrackMan(this, 4.0);
@@ -138,7 +129,7 @@ void Protestor::doSomething(){
     
     //If number of steps<=0 a random direction is assigned to protestor.
     if(getSteps()<=0){
-        moveInDir= rand()%(10) + 8;
+        moveInDir= rand()%(50) + 8;
         while (1) {
             int r=rand()%4;
             switch (r) {
